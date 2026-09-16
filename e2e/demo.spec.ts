@@ -110,6 +110,15 @@ test('predajný web, demo s chybnou vetvou, súhrn, návrat, prehľad a dopyt', 
   await expect(page.getByLabel('Text dopytu')).toHaveValue(/Firma: Veľkoobchod Test s\. r\. o\./);
   const textPoDopyte = await page.locator('body').innerText();
   expect(textPoDopyte).not.toContain('Dopyt bol odoslaný');
+  const mailto = page.getByRole('link', { name: 'Otvoriť e-mail s dopytom' });
+  await expect(mailto).toBeVisible();
+  await expect(mailto).toHaveAttribute('href', /^mailto:info@chybynaskusku\.online\?subject=/);
+
+  // Ochrana osobných údajov je dostupná z pätičky.
+  await page.goto('/#/ochrana-udajov');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Ochrana osobných údajov');
+  await expect(page.getByText('Nepoužíva cookies ani žiadne sledovanie návštevnosti.')).toBeVisible();
+  await page.goto('/#dopyt');
 
   // Prázdny formulár nahlási chyby pri poliach.
   await page.reload();

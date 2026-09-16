@@ -8,8 +8,10 @@ import { Prehravac } from './demo/Prehravac';
 import { DemoProvider } from './demo/stav';
 import { CESTY, useTrasa } from './router';
 import { Landing } from './web/Landing';
+import { OchranaUdajov } from './web/OchranaUdajov';
 
 const JE_KLIENT = trening.rezim === 'klient';
+const CESTA_OCHRANA = '/ochrana-udajov';
 
 export function App() {
   const trasa = useTrasa();
@@ -43,6 +45,7 @@ function nazovStranky(cesta: string): string {
   if (cesta === '/') return JE_KLIENT ? zaklad : `${zaklad}: tréning z vlastných chýb firmy`;
   if (cesta === '/demo') return `Situácie: ${zaklad}`;
   if (cesta === '/demo/prehlad') return `Prehľad tréningu: ${zaklad}`;
+  if (cesta === CESTA_OCHRANA) return `Ochrana osobných údajov: ${zaklad}`;
   const scenar = trening.scenare.find((s) => cesta === `/demo/${s.id}`);
   return scenar ? `${scenar.nazov}: ${zaklad}` : zaklad;
 }
@@ -51,6 +54,7 @@ function vyberObsah(cesta: string, params: URLSearchParams): ReactNode {
   if (cesta === '/') return JE_KLIENT ? <DemoDomov /> : <Landing />;
   if (cesta === '/demo') return <DemoDomov />;
   if (cesta === '/demo/prehlad') return <PrehladTreningu />;
+  if (cesta === CESTA_OCHRANA && !JE_KLIENT) return <OchranaUdajov />;
   const index = trening.scenare.findIndex((s) => cesta === `/demo/${s.id}`);
   const scenar = trening.scenare[index];
   if (scenar) {
@@ -141,6 +145,11 @@ function Rozlozenie({ cesta, children }: { cesta: string; children: ReactNode })
                   Kontakt: <a href="#dopyt">dopyt vyššie</a>
                 </p>
               ))}
+            {!JE_KLIENT && (
+              <p className="tlmeny male">
+                <a href={`#${CESTA_OCHRANA}`}>Ochrana osobných údajov</a>
+              </p>
+            )}
           </div>
           <div className="paticka__poznamky">
             {trening.znacka.jeModelova && (
