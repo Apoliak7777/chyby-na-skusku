@@ -15,8 +15,8 @@ export const znacka = {
    * a ponúkne jeho skopírovanie; tlačidlo „Otvoriť e-mail s dopytom“ sa neukáže.
    */
   kontaktEmail: '',
-  /** Verejná adresa webu (kým nie je doména, ostáva prázdna). */
-  webAdresa: '',
+  /** Verejná adresa webu. */
+  webAdresa: 'https://chybynaskusku.online',
   /**
    * Poznámka k DPH pri cenách. Nastaví sa podľa skutočných fakturačných údajov;
    * do vtedy sa pri cenách žiadny daňový status neuvádza.
