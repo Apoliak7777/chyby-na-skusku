@@ -25,8 +25,9 @@ domény aj z podpriečinka (`base: './'` vo `vite.config.ts`) a nepotrebuje pres
 |---|---|---|
 | Kontaktný e-mail na dopyty | `znacka.kontaktEmail` | chýba – formulár zatiaľ len pripraví text na skopírovanie; po doplnení sa ukáže tlačidlo „Otvoriť e-mail s dopytom“ a adresa v pätičke |
 | Doména / adresa webu | `znacka.webAdresa` + hosting | chýba – nevymýšľa sa |
-| Poznámka k DPH | `znacka.dphPoznamka` | chýba – nastaviť podľa skutočných fakturačných údajov (platca / neplatca); dovtedy sa pri cenách daňový status neuvádza |
-| Fakturačné údaje poskytovateľa | do konkrétnej ponuky klientovi (mimo webu) | chýbajú |
+| Poznámka k DPH | `znacka.dphPoznamka` | zámerne prázdna natrvalo: na webe sa daňový status neuvádza (rozhodnutie prevádzkovateľa 16. 9. 2026); ceny sú len sumy |
+| Meno prevádzkovateľa | `znacka.poskytovatel` | zámerne prázdne: na webe sa meno neuvádza (rozhodnutie prevádzkovateľa 16. 9. 2026) |
+| Fakturačné údaje poskytovateľa | do konkrétnej ponuky klientovi (mimo webu) | mimo webu |
 | Text „Kontakt“ v pätičke | odvodí sa z `kontaktEmail` | automaticky |
 
 Pri dopyte platí: „Dopyt bol odoslaný“ sa smie zobraziť jedine pri skutočnom odoslaní cez zapojenú

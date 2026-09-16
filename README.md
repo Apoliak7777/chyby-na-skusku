@@ -104,15 +104,15 @@ docs/                       dokumentácia (nižšie)
 - **Kontrolné body** majú tri stavy: správne na prvý pokus, opravené po spätnej väzbe, nevyriešené. Nedotknutý bod je po skončení nevyriešený.
 - **Modelové sumy** (120 €, 45 €, 65 €) sú viazané na konkrétne možnosti a zobrazujú sa len na vetve, ktorá k nim vedie. Návrat ku kroku ich odstráni, nič sa nezdvojí (testy `src/engine/pokus.test.ts`).
 - **Dopyt bez backendu.** Formulár pripraví text a ponúkne skopírovanie. Tlačidlo „Otvoriť e-mail s dopytom“ a viditeľná adresa sa ukážu až po nastavení `kontaktEmail` v `src/config/znacka.ts`. Stránka nikdy nehlási „odoslané“.
-- **Ceny** sú na webe označené ako úvodná ponuka. Poznámka k DPH je prázdna (`dphPoznamka`), kým nie sú známe fakturačné údaje.
+- **Ceny** sú na webe označené ako úvodná cena a uvádzajú sa len ako sumy. Daňový status sa na webe neuvádza (`dphPoznamka` ostáva prázdna).
 - **Žiadne cudzie skripty, písma, cookies ani sledovanie.** Písmo je systémové (Segoe UI / system-ui).
 - **Na webe nie sú referencie, logá zákazníkov, počty používateľov ani percentá úspory** – nič také zatiaľ neexistuje.
 
-## Čo chýba pred publikovaním
+## Čo ešte chýba
 
-Nič z tohto nebráni lokálnemu použitiu dema. Presný zoznam s miestami v kóde je v `docs/NASADENIE.md`.
+Web beží na `https://chybynaskusku.online`. Zoznam s miestami v kóde je v `docs/NASADENIE.md`.
 
-- kontaktný e-mail na dopyty (`znacka.kontaktEmail`),
-- doména a zvolený hosting (`znacka.webAdresa`),
-- poznámka k DPH podľa fakturačných údajov (`znacka.dphPoznamka`),
-- fakturačné údaje poskytovateľa do ponuky klientovi (mimo webu).
+- kontaktný e-mail na dopyty (`znacka.kontaktEmail`), kým nie je, formulár dopyt len pripraví na skopírovanie,
+- stránka ochrany osobných údajov (po doplnení e-mailu).
+
+Meno prevádzkovateľa ani daňový status sa na webe zámerne neuvádzajú (`poskytovatel` a `dphPoznamka` ostávajú prázdne).
