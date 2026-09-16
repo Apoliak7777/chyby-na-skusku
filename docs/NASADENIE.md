@@ -31,7 +31,7 @@ domény aj z podpriečinka (`base: './'` vo `vite.config.ts`) a nepotrebuje pres
 
 Pri dopyte platí: „Dopyt bol odoslaný“ sa smie zobraziť jedine pri skutočnom odoslaní cez zapojenú
 službu. Súčasná verzia žiadnu nemá, preto hovorí „Dopyt je pripravený. Odošlite ho zo svojho e-mailu.“
-Ak má Alex dopyty zbierať automaticky, treba skutočný backend (napr. formulárová služba), nie ďalšie
+Ak sa majú dopyty zbierať automaticky, treba skutočný backend (napr. formulárová služba), nie ďalšie
 `mailto:` – ľuďom, ktorí čítajú poštu v prehliadači, `mailto:` nič neotvorí, preto je hlavná cesta
 kopírovanie textu.
 

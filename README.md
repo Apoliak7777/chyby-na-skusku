@@ -7,7 +7,7 @@ Tento projekt je jej **prvá funkčná verzia** (16. 9. 2026):
 2. **Verejné hrateľné demo** – tri úplné situácie vymyslenej firmy DEMO DISTRIBÚCIA, bez registrácie.
 3. **Základ výroby** – scenáre ako dáta oddelené od aplikácie, validácia, návod a šablóna pre ďalších klientov.
 
-Autor a prevádzkovateľ: Alex Poliak. Projekt vznikol podľa interného zadania z 15. 9. 2026.
+Projekt vznikol podľa interného zadania z 15. 9. 2026.
 
 ## Rýchly štart
 

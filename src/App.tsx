@@ -128,7 +128,7 @@ function Rozlozenie({ cesta, children }: { cesta: string; children: ReactNode })
           <div className="paticka__hlavne">
             <p className="paticka__znacka" translate="no">
               <strong>{JE_KLIENT ? trening.znacka.nazovFirmy : znacka.nazov}</strong>
-              {!JE_KLIENT && <span className="tlmeny"> · {znacka.poskytovatel}</span>}
+              {!JE_KLIENT && znacka.poskytovatel && <span className="tlmeny"> · {znacka.poskytovatel}</span>}
               <span className="tlmeny"> · {znacka.rok}</span>
             </p>
             {!JE_KLIENT &&

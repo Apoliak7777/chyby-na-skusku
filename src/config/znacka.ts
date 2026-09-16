@@ -8,8 +8,8 @@
 
 export const znacka = {
   nazov: 'Chyby na skúšku',
-  /** Kto službu poskytuje (zobrazuje sa v pätičke a v dopyte). */
-  poskytovatel: 'Alex Poliak',
+  /** Meno poskytovateľa sa na webe zámerne neuvádza; ak sa vyplní, ukáže sa v pätičke. */
+  poskytovatel: '',
   /**
    * Kontaktný e-mail na dopyty. Kým je prázdny, formulár dopyt len pripraví
    * a ponúkne jeho skopírovanie; tlačidlo „Otvoriť e-mail s dopytom“ sa neukáže.

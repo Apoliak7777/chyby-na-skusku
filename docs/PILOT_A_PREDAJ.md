@@ -1,6 +1,6 @@
 # Pilot a predaj
 
-Pracovný postup pre Alexa: čo predávame, komu, ako vyzerá rozhovor, ako sa vyrába pilot a ako sa
+Pracovný postup pre poskytovateľa: čo predávame, komu, ako vyzerá rozhovor, ako sa vyrába pilot a ako sa
 overuje, či má služba dopyt. Nič z toho neposiela správy firmám automaticky – je to plán pre človeka.
 
 ## 1. Čo sa predáva
@@ -28,7 +28,7 @@ hotový výsledok. Nepredáva sa licencia, predplatné ani prístup k platforme.
 
 ### Čo sleduje kalkulácia
 
-Tržba nie je zisk. Do nákladov pilotu patrí Alexov čas (predajný rozhovor, dopĺňanie podkladov,
+Tržba nie je zisk. Do nákladov pilotu patrí čas poskytovateľa (predajný rozhovor, dopĺňanie podkladov,
 výroba, kontrola, úpravy, odovzdanie), používané AI nástroje a prípadný hosting. Po prvom pilote
 zapísať skutočné hodiny a porovnať s cenou.
 
@@ -123,7 +123,7 @@ cieľovú skupinu, rozsah alebo ponuku **pred** ďalšou investíciou do funkci�
 
 ## 9. Čo merať pri prvom pilote
 
-- čas výroby (Alexove hodiny po fázach A–E),
+- čas výroby (hodiny poskytovateľa po fázach A–E),
 - čas vedúceho klienta pri príprave a schvaľovaní,
 - skúsenosť pracovníkov (zrozumiteľnosť, čo im pomohlo, kde sa zasekli),
 - či sa tréning používa pri zaškoľovaní aj po odovzdaní.
