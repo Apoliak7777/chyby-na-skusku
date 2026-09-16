@@ -98,9 +98,27 @@ workflow `.github/workflows/pages.yml`, ktorý nainštaluje závislosti, spraví
 web beží na adrese `https://apoliak7777.github.io/chyby-na-skusku/`. Hash adresy a `base: './'`
 zaručujú, že build funguje aj z tohto podpriečinka.
 
-Pripojenie vlastnej domény: v nastaveniach repozitára (Pages → Custom domain) zadať doménu, do
-`public/CNAME` dať jej názov a v DNS nastaviť A záznamy GitHub Pages pre koreň domény a `www` ako
-CNAME na `apoliak7777.github.io`. Po overení zapnúť „Enforce HTTPS“.
+Pripojenie vlastnej domény (rozhodnutie 16. 9. 2026: `chybynaskusku.online`, kúpi sa na Hostingeri
+spolu so schránkou `info@chybynaskusku.online`; kúpa je odložená, kým nepríde prvá platba z už
+bežiacich biznisov):
+
+1. V DNS domény (Hostinger → DNS / Name Servers) nastaviť:
+
+   | Typ | Názov | Hodnota |
+   |---|---|---|
+   | A | @ | 185.199.108.153 |
+   | A | @ | 185.199.109.153 |
+   | A | @ | 185.199.110.153 |
+   | A | @ | 185.199.111.153 |
+   | CNAME | www | apoliak7777.github.io |
+
+   Záznamy MX a TXT pre poštu (Hostinger) ostávajú bez zmeny; pošta zostáva v Hostingeri.
+2. Do `public/CNAME` dať jeden riadok `chybynaskusku.online` a pushnúť (build ho skopíruje do `dist/`).
+3. V nastaveniach repozitára (Settings → Pages → Custom domain) zadať `chybynaskusku.online`, počkať na
+   overenie DNS a zapnúť „Enforce HTTPS“.
+4. Do `src/config/znacka.ts` doplniť `kontaktEmail: 'info@chybynaskusku.online'` a
+   `webAdresa: 'https://chybynaskusku.online'`, pridať stránku ochrany osobných údajov, pushnúť.
+5. Otvoriť web na doméne aj na `www`, vyskúšať dopyt (tlačidlo „Otvoriť e-mail s dopytom“) a jednu situáciu.
 
 Repozitár musí ostať bez klientskych priečinkov a bez tajných údajov; `.gitignore` to rieši
 a `git status` pred pushom to potvrdí. Klientske tréningy sa nikdy nenasadzujú cez tento verejný
