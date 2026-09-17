@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "npm run typecheck && vite build",
     "build:klient": "node scripts/build_klient.mjs",
+    "podmienky": "node scripts/podmienky_pdf.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "validate": "tsx scripts/validuj_scenare.ts",

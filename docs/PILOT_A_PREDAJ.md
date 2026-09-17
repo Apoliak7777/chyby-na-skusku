@@ -16,13 +16,16 @@ hotový výsledok. Nepredáva sa licencia, predplatné ani prístup k platforme.
 | Kompletný tréning | 10 situácií pre jednu pozíciu, firemný vzhľad, dve súhrnné kolá úprav, návod a odovzdanie zdrojov | 1 900 € |
 | Rozšírenie | 5 nových situácií v existujúcom tréningu, jedno súhrnné kolo úprav | 490 € |
 
-- Ceny sú návrh na testovanie; na webe sú označené ako úvodná ponuka. Spôsob uvádzania DPH sa doplní
-  podľa fakturačných údajov (pole `dphPoznamka`), nevymýšľa sa.
+- Ceny sú návrh na testovanie; na webe sú označené ako úvodná ponuka. Daňový status sa na webe ani
+  v podmienkach neuvádza (rozhodnutie 16. 9. 2026), pole `dphPoznamka` ostáva prázdne.
 - Jedna situácia = jedna pracovná situácia, 2 až 4 rozhodovacie kroky, 3 až 5 minút. Bez 3D simulácie,
   filmovania a napojenia na firemné systémy.
 - Osobitne sa oceňuje: hosting, integrácie (ERP, CRM, HR, LMS), ďalšie jazyky, nové pozície.
 - Oprava rozporu so schváleným zadaním je v cene; nový požadovaný obsah je rozšírenie. Toto patrí
   do každej konkrétnej ponuky klientovi.
+- Podmienky pilotu pre klienta (čo dostane, čo dodá, postup, platba polovica pri objednávke a polovica
+  pri odovzdaní, čo nie je v cene, dôvernosť) sú v `PODMIENKY_PILOTU.md`; PDF na poslanie vyrobí
+  `npm run podmienky`. Do konkrétnej ponuky sa dopĺňa už len pozícia, termín a platobné údaje.
 - Odhad dodania pilotu: 7 až 10 pracovných dní od dodania úplných podkladov; pri prvej zákazke sa
   termín potvrdí individuálne podľa skúsenosti s výrobou dema. Nikde nesľubovať dodanie za pár minút.
 

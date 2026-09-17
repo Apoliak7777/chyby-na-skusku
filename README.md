@@ -46,6 +46,7 @@ domény a zoznam údajov, ktoré treba pred ostrou prevádzkou doplniť, je v `d
 | `npm run test:e2e` | koncový test v Chromiu nad `dist/` (spustite po `npm run build`) |
 | `npm run check` | typy + validácia + testy + build naraz |
 | `npm run build:klient -- treningy_klientov/<firma>` | samostatný klientsky tréning (pozri `docs/NASADENIE.md`) |
+| `npm run podmienky` | podmienky pilotu z `docs/PODMIENKY_PILOTU.md` do `vystupy/Podmienky_pilotu.pdf` (jedna strana A4 na poslanie klientovi) |
 | `node scripts/nahlady.mjs` | snímky obrazovky webu a dema do `nahlady/` (pri bežiacom `npm run preview`) |
 
 Koncový test a snímky používajú Chromium, ktoré je na stroji už stiahnuté pre Playwright
@@ -82,6 +83,7 @@ src/styles.css              jeden štýl pre web aj demo (svetlé pozadie, tmavo
 scripts/validuj_scenare.ts  validácia z príkazového riadka
 scripts/build_klient.mjs    build klientskeho tréningu z priečinka mimo repozitára
 scripts/nahlady.mjs         snímky obrazovky
+scripts/podmienky_pdf.mjs   podmienky pilotu z docs/ do jednostranového PDF (vystupy/, mimo repozitára)
 e2e/demo.spec.ts            koncový test (web → demo → chybná vetva → oprava → súhrn → návrat → nový pokus → prehľad → dopyt; mobil 360 px; klávesnica)
 docs/                       dokumentácia (nižšie)
 ```
@@ -90,6 +92,7 @@ docs/                       dokumentácia (nižšie)
 
 - [docs/SCENARE.md](docs/SCENARE.md) – dátový model, pravidlá troch scenárov, ako scenár upraviť alebo pridať, čo kontroluje validácia.
 - [docs/PILOT_A_PREDAJ.md](docs/PILOT_A_PREDAJ.md) – balíčky a rozsah, otázky na rozhovor, plán prvých desiatich rozhovorov, čo zaznamenávať.
+- [docs/PODMIENKY_PILOTU.md](docs/PODMIENKY_PILOTU.md) – jednostranové podmienky pilotu pre klienta: čo dostane, čo dodá, postup, cena a platba, čo nie je v cene, dôvernosť. PDF na poslanie: `npm run podmienky`.
 - [docs/SABLONA_SCENARA.md](docs/SABLONA_SCENARA.md) – opakovateľné zadanie pre AI pri spracovaní podkladov klienta.
 - [docs/NASADENIE.md](docs/NASADENIE.md) – publikovanie verejného dema, čo doplniť pred publikovaním, oddelenie interných klientskych tréningov.
 - [docs/OVERENIE.md](docs/OVERENIE.md) – vykonané kontroly, výsledky a známe obmedzenia.
