@@ -13,16 +13,13 @@ export const NAKLAD_OPRAVY = 45;
 
 export const kusyAleboBalenia: Scenar = {
   id: 'kusy-alebo-balenia',
-  verzia: '1.0',
+  verzia: '1.1',
   nazov: 'Kusy alebo balenia',
-  strucnyProblem:
-    'Zákazník píše „18 kusov“. Formulár počíta v baleniach po 6 kusov. Jedna číslica rozhodne, či faktúra bude na 252 € alebo 1 512 €.',
+  strucnyProblem: 'Stály zákazník objednáva e-mailom 18 kusov kotviacich spôn. Zadáte objednávku do systému?',
   pozicia: 'Pracovník príjmu objednávok',
-  cvici: 'Kontrola mernej jednotky a celkovej ceny objednávky.',
-  zadanie: [
-    'Je pondelok, 14:05. Zadávate objednávky do systému DEMO DISTRIBÚCIE. Prišla krátka objednávka od stáleho zákazníka, ktorý píše v kusoch. Produkt sa však predáva v baleniach.',
-    'Vašou úlohou je zadať objednávku tak, aby zákazník dostal presne to, čo žiada, a faktúru na správnu sumu.',
-  ],
+  cvici: 'kontrola mernej jednotky a celkovej ceny objednávky.',
+  zadanie: ['Pondelok 14:05. Zadávate objednávky do systému DEMO DISTRIBÚCIE. Prišla krátka objednávka od stáleho zákazníka.'],
+  typickaChyba: 's2-start-rovno',
   podklady: [
     {
       id: 's2-email',
@@ -31,9 +28,9 @@ export const kusyAleboBalenia: Scenar = {
       bloky: [
         {
           typ: 'email',
-          od: 'Martin Kolár, Autoservis Kolár s. r. o. (modelový zákazník)',
+          od: 'Martin Kolár, Autoservis Kolár s. r. o.',
           komu: 'príjem objednávok, DEMO DISTRIBÚCIA',
-          predmet: 'Objednávka – kotviace spony K-6',
+          predmet: 'Objednávka: kotviace spony K-6',
           datum: 'pondelok 13:52',
           text: [
             'Dobrý deň,',
@@ -62,7 +59,7 @@ export const kusyAleboBalenia: Scenar = {
         },
         {
           typ: 'poznamka',
-          text: ['Ceny v ukážke sú modelové a uvádzajú sa na jednotnej cenovej báze bez ďalších položiek.'],
+          text: ['Ceny sú bez príplatkov.'],
         },
       ],
     },
@@ -74,7 +71,7 @@ export const kusyAleboBalenia: Scenar = {
         {
           typ: 'text',
           text: [
-            'Množstvo sa v objednávke zadáva v predajnej jednotke produktu. Pri K-6 je predajnou jednotkou balenie (bal) – formulár túto jednotku uvádza priamo pri poli Množstvo.',
+            'Množstvo sa v objednávke zadáva v predajnej jednotke produktu. Pri K-6 je predajnou jednotkou balenie (bal), formulár túto jednotku uvádza priamo pri poli Množstvo.',
             'Systém vedľa množstva zobrazuje prepočet na kusy a celkovú cenu. Pred potvrdením ukáže rekapituláciu.',
           ],
         },
@@ -96,9 +93,9 @@ export const kusyAleboBalenia: Scenar = {
         },
         {
           typ: 'poznamka',
-          nadpis: 'Modelový následok',
+          nadpis: 'Následok',
           text: [
-            'Oprava chybne vyexpedovanej objednávky (zvoz tovaru späť) stojí v modelovom prípade 45 € na dopravu. Vrátený tovar sa vracia na sklad – nie je to strata, ale objednávka sa prerába, faktúra sa dobropisuje a zákazník čaká.',
+            'Oprava chybne vyexpedovanej objednávky stojí 45 € na dopravu (modelová suma). Tovar sa vráti na sklad, takže to nie je strata, ale objednávka sa prerába, faktúra sa dobropisuje a zákazník čaká.',
           ],
         },
       ],
@@ -109,7 +106,7 @@ export const kusyAleboBalenia: Scenar = {
       id: 's2-kb-karta',
       nazov: 'Otvoril produktovú kartu pred zadaním množstva',
       vysvetlenie: 'Predajná jednotka je na produktovej karte. Bez nej sa množstvo zadáva naslepo.',
-      zdrojPravidla: 'Pravidlá firmy, bod 1 (modelové pravidlo zo zadania dema)',
+      zdrojPravidla: 'Pravidlá firmy, bod 1',
     },
     {
       id: 's2-kb-jednotka',
@@ -132,18 +129,18 @@ export const kusyAleboBalenia: Scenar = {
       nadpis: 'Objednávka od zákazníka',
       pribeh: [{ typ: 'podklad', podklad: 's2-email' }],
       uloha: 'Objednávku treba zadať do systému. Ako začnete?',
-      podklady: ['s2-email', 's2-produkt'],
+      podklady: ['s2-email'],
       moznosti: [
         {
           id: 's2-start-karta',
-          text: 'Otvoriť produktovú kartu K-6 a zistiť, v akej jednotke sa predáva.',
+          text: 'Pozrieť produktovú kartu K-6.',
           dalsi: 's2-karta',
           nasledok: 'Otvorili ste produktovú kartu.',
           ucinky: { 's2-kb-karta': 'splnene' },
         },
         {
           id: 's2-start-rovno',
-          text: 'Zadať do objednávky množstvo 18 – presne ako píše zákazník – a pokračovať na rekapituláciu.',
+          text: 'Zadať do objednávky množstvo 18.',
           dalsi: 's2-rekap-18',
           nasledok: 'Zadali ste 18 bez kontroly jednotky.',
           ucinky: { 's2-kb-karta': 'nesplnene', 's2-kb-jednotka': 'nesplnene' },
@@ -220,14 +217,14 @@ export const kusyAleboBalenia: Scenar = {
       moznosti: [
         {
           id: 's2-rekap3-potvrdit',
-          text: 'Potvrdiť objednávku: 3 balenia = 18 kusov, 252 €.',
+          text: 'Potvrdiť objednávku.',
           dalsi: 's2-koniec-spravne',
           nasledok: 'Objednávka sedí so žiadosťou zákazníka.',
           ucinky: { 's2-kb-rekapitulacia': 'splnene' },
         },
         {
           id: 's2-rekap3-prepisat',
-          text: 'Prepísať množstvo na 18 – zákazník predsa napísal 18.',
+          text: 'Prepísať množstvo na 18.',
           dalsi: 's2-rekap-18',
           nasledok: 'Zmenili ste množstvo na 18 balení.',
           ucinky: { 's2-kb-jednotka': 'nesplnene' },
@@ -256,7 +253,7 @@ export const kusyAleboBalenia: Scenar = {
       moznosti: [
         {
           id: 's2-rekap18-potvrdit',
-          text: 'Potvrdiť – množstvo 18 sedí s tým, čo zákazník napísal.',
+          text: 'Potvrdiť objednávku.',
           dalsi: 's2-koniec-expedicia',
           nasledok: 'Sklad expeduje 108 kusov.',
           naklad: NAKLAD_OPRAVY,
@@ -264,7 +261,7 @@ export const kusyAleboBalenia: Scenar = {
         },
         {
           id: 's2-rekap18-opravit',
-          text: 'Zastaviť sa: 108 kusov a 1 512 € nezodpovedá požiadavke 18 kusov. Opraviť množstvo na 3 balenia.',
+          text: 'Upraviť množstvo pred potvrdením.',
           dalsi: 's2-rekap-oprava',
           nasledok: 'Chybu ste zachytili v rekapitulácii.',
           ucinky: { 's2-kb-jednotka': 'splnene', 's2-kb-rekapitulacia': 'splnene' },
@@ -289,14 +286,14 @@ export const kusyAleboBalenia: Scenar = {
       moznosti: [
         {
           id: 's2-ine-opravit',
-          text: 'Opraviť množstvo na 3 balenia (18 kusov) a skontrolovať rekapituláciu.',
+          text: 'Upraviť množstvo pred potvrdením.',
           dalsi: 's2-rekap-oprava',
           nasledok: 'Opravili ste množstvo podľa prepočtu.',
           ucinky: { 's2-kb-jednotka': 'splnene', 's2-kb-rekapitulacia': 'splnene' },
         },
         {
           id: 's2-ine-potvrdit',
-          text: 'Potvrdiť objednávku tak, ako je.',
+          text: 'Potvrdiť objednávku.',
           dalsi: 's2-koniec-ine',
           nasledok: 'Sklad expeduje iné množstvo, než zákazník žiadal.',
           naklad: NAKLAD_OPRAVY,
@@ -309,6 +306,10 @@ export const kusyAleboBalenia: Scenar = {
       typ: 'rozhodnutie',
       nadpis: 'Rekapitulácia po oprave',
       pribeh: [
+        {
+          typ: 'text',
+          text: ['Zákazník chce 18 kusov a balenie má 6 kusov. Množstvo ste upravili na 3 balenia.'],
+        },
         {
           typ: 'zaznam',
           nadpis: 'Rekapitulácia pred potvrdením',
@@ -326,13 +327,13 @@ export const kusyAleboBalenia: Scenar = {
       moznosti: [
         {
           id: 's2-oprava-potvrdit',
-          text: 'Potvrdiť objednávku: 3 balenia = 18 kusov, 252 €.',
+          text: 'Potvrdiť objednávku.',
           dalsi: 's2-koniec-spravne',
           nasledok: 'Objednávka sedí so žiadosťou zákazníka.',
         },
         {
           id: 's2-oprava-overit',
-          text: 'Ešte raz overiť na produktovej karte, že 1 balenie = 6 kusov, a potom potvrdiť.',
+          text: 'Ešte raz pozrieť produktovú kartu a potom potvrdiť.',
           dalsi: 's2-koniec-spravne',
           nasledok: 'Overili ste prepočet a potvrdili objednávku.',
         },
@@ -347,14 +348,15 @@ export const kusyAleboBalenia: Scenar = {
         {
           typ: 'text',
           text: [
-            'Objednávka je potvrdená: K-6, 3 balenia (18 kusov), 252 €. Zákazníkovi odišlo potvrdenie s oboma údajmi – balenia aj kusy. Sklad vychystal 3 balenia.',
+            'Objednávka je potvrdená: K-6, 3 balenia (18 kusov), 252 €.',
+            'Zákazník dostal potvrdenie s oboma údajmi, balenia aj kusy. Sklad vychystal 3 balenia.',
           ],
         },
       ],
       vysvetlenie: [
-        'Zákazník píše v kusoch, formulár počíta v predajnej jednotke. Predajnú jednotku ste zistili na produktovej karte skôr, ako ste zadali číslo.',
+        'Zákazník píše v kusoch, formulár počíta v predajnej jednotke. Predajná jednotka je na produktovej karte, preto sa pozerá skôr, ako sa zadá číslo.',
         '18 kusov ÷ 6 kusov v balení = 3 balenia. Celková cena 3 × 84 € = 252 €.',
-        'Rekapituláciu ste skontrolovali pred potvrdením – tam sa chyba dá ešte opraviť bez nákladov.',
+        'Rekapitulácia je posledné miesto, kde sa chyba dá opraviť bez nákladov.',
       ],
     },
     {
@@ -367,14 +369,21 @@ export const kusyAleboBalenia: Scenar = {
           typ: 'text',
           text: [
             'Sklad vyexpedoval 18 balení, teda 108 kusov, s faktúrou na 1 512 €. Zákazník na druhý deň volá: objednal 18 kusov za 252 €.',
-            '90 kusov (15 balení) sa vracia. Doprava späť stojí v modelovom prípade 45 €. Vrátený tovar ide späť na sklad – nie je to strata, ale objednávka sa prerába, faktúra sa dobropisuje a zákazník čaká na správny doklad.',
+            '90 kusov (15 balení) sa vracia. Doprava späť stojí 45 € (modelová suma). Tovar sa vráti na sklad, takže to nie je strata, ale objednávka sa prerába, faktúra sa dobropisuje a zákazník čaká na správny doklad.',
           ],
         },
       ],
       vysvetlenie: [
-        'Číslo od zákazníka (18) bolo v kusoch, pole formulára je v baleniach. Bez produktovej karty sa to nedalo vidieť.',
-        'Rekapitulácia ukazovala 108 kusov a 1 512 € – šesťnásobok toho, čo zákazník žiadal. To bol posledný okamih na opravu.',
-        'Modelový náklad 45 € je doprava pri oprave expedície. Cena objednávky ani hodnota vráteného tovaru (90 × 14 € = 1 260 €) nie sú strata – tovar sa vrátil na sklad.',
+        'Číslo od zákazníka (18) bolo v kusoch, pole formulára je v baleniach. Predajná jednotka je na produktovej karte.',
+        'Rekapitulácia ukazovala 108 kusov a 1 512 €, šesťnásobok toho, čo zákazník žiadal. To bol posledný okamih na opravu.',
+        'Náklad 45 € je doprava pri oprave expedície. Cena objednávky ani hodnota vráteného tovaru (90 × 14 € = 1 260 €) nie sú strata, tovar sa vrátil na sklad.',
+      ],
+      retazNasledku: [
+        '108 kusov namiesto 18',
+        'doprava späť 45 € (modelová suma)',
+        'dobropis a nová faktúra',
+        'prerobená objednávka',
+        'zákazník čaká na správny doklad',
       ],
     },
     {
@@ -386,22 +395,24 @@ export const kusyAleboBalenia: Scenar = {
         {
           typ: 'text',
           text: [
-            'Sklad vyexpedoval množstvo, ktoré nezodpovedalo požiadavke zákazníka (18 kusov). Zásielka sa musela prerábať; doprava naspäť stojí v modelovom prípade 45 €.',
+            'Sklad vyexpedoval iné množstvo, než zákazník žiadal (18 kusov).',
+            'Zásielku bolo treba opraviť, vrátiť prebytok alebo doviezť chýbajúce kusy. Doprava navyše stojí 45 € (modelová suma).',
           ],
         },
       ],
       vysvetlenie: [
         'Správny prepočet: 18 kusov ÷ 6 kusov v balení = 3 balenia, 3 × 84 € = 252 €.',
         'Rekapitulácia nesedela s požiadavkou a systém prepočet ukazoval. Chyba sa dala zachytiť pred potvrdením.',
-        'Modelový náklad 45 € je doprava pri oprave; hodnota tovaru nie je strata, tovar sa vrátil na sklad.',
+        'Náklad 45 € je doprava navyše. Hodnota tovaru nie je strata.',
       ],
+      retazNasledku: ['zásielka s iným množstvom, než zákazník chcel', 'doprava navyše 45 € (modelová suma)', 'opravená zásielka'],
     },
   ],
   schvalenie: {
     stav: 'schvalene',
     verziaPravidiel: 'demo-1.0',
-    podklad: 'Zadanie projektu Chyby na skúšku, kapitola 8, scenár 2 (modelové pravidlá)',
-    potvrdil: 'autor zadania (demo)',
+    podklad: 'Pravidlá firmy v podkladoch situácie (modelové pravidlá)',
+    potvrdil: 'autor ukážky',
     datum: '2026-09-15',
   },
 };

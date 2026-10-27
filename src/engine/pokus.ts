@@ -1,7 +1,9 @@
 import type {
+  Blok,
   Id,
   KontrolnyBod,
   Moznost,
+  Podklad,
   RozhodovaciUzol,
   Scenar,
   UcinokKB,
@@ -14,7 +16,7 @@ import type {
  *
  * Všetko sú čisté funkcie nad nemennými dátami: pokus sa nikdy neupravuje na mieste,
  * vždy vzniká nový objekt. Vďaka tomu je návrat ku kroku len orezanie zoznamu krokov
- * a náklady ani kontrolné body sa nemôžu započítať dvakrát – počítajú sa vždy nanovo
+ * a náklady ani kontrolné body sa nemôžu započítať dvakrát: počítajú sa vždy nanovo
  * z aktuálnej cesty.
  */
 
@@ -228,4 +230,131 @@ export function vyhodnot(scenar: Scenar, pokus: Pokus): Vyhodnotenie {
   const vysledok: Vyhodnotenie = { dokonceny, verdikt, body, naklad, cesta, pocty };
   if (dokonceny) vysledok.zaver = posledny as ZaverecnyUzol;
   return vysledok;
+}
+
+/* ---------- Odvodené z dát scenára (súhrn, prehľad situácií; vyhodnotenie nemenia) ---------- */
+
+export interface TypickaChyba {
+  /** Uzol, v ktorom nováčik chybu robí. */
+  uzol: RozhodovaciUzol;
+  moznost: Moznost;
+  /** Záver s výsledkom chyba, ku ktorému z chyby vedie najkratšia cesta. */
+  zaver: ZaverecnyUzol;
+  /** Modelový náklad na tejto najkratšej ceste. */
+  naklad: number;
+}
+
+/**
+ * Typická chyba nováčika podľa `scenar.typickaChyba`: možnosť, uzol a záver s výsledkom
+ * chyba, ku ktorému z nej vedie najmenej krokov (pri rovnakej dĺžke rozhoduje poradie možností).
+ */
+export function najdiTypickuChybu(scenar: Scenar): TypickaChyba | undefined {
+  const id = scenar.typickaChyba;
+  if (!id) return undefined;
+  let uzol: RozhodovaciUzol | undefined;
+  let moznost: Moznost | undefined;
+  for (const u of scenar.uzly) {
+    if (u.typ !== 'rozhodnutie') continue;
+    const m = u.moznosti.find((x) => x.id === id);
+    if (m) {
+      uzol = u;
+      moznost = m;
+      break;
+    }
+  }
+  if (!uzol || !moznost) return undefined;
+
+  // Prehľadávanie do šírky: prvý navštívený záver s výsledkom chyba je najbližší.
+  const front: { id: Id; naklad: number }[] = [{ id: moznost.dalsi, naklad: moznost.naklad ?? 0 }];
+  const videne = new Set<Id>();
+  while (front.length > 0) {
+    const s = front.shift()!;
+    if (videne.has(s.id)) continue;
+    videne.add(s.id);
+    const u = scenar.uzly.find((x) => x.id === s.id);
+    if (!u) continue;
+    if (u.typ === 'zaver') {
+      if (u.vysledok === 'chyba') return { uzol, moznost, zaver: u, naklad: s.naklad };
+      continue;
+    }
+    for (const m of u.moznosti) front.push({ id: m.dalsi, naklad: s.naklad + (m.naklad ?? 0) });
+  }
+  return undefined;
+}
+
+function pocetSlov(texty: string[]): number {
+  return texty.reduce((n, t) => n + t.split(/\s+/).filter(Boolean).length, 0);
+}
+
+/** Všetok text blokov (vložené podklady sa rozbalia), na odhad času čítania. */
+function textyBlokov(bloky: Blok[], podklady: Podklad[]): string[] {
+  return bloky.flatMap((b): string[] => {
+    switch (b.typ) {
+      case 'text':
+        return b.text;
+      case 'poznamka':
+        return [...(b.nadpis ? [b.nadpis] : []), ...b.text];
+      case 'email':
+        return [b.od, b.predmet, ...b.text];
+      case 'tabulka':
+        return [...(b.nadpis ? [b.nadpis] : []), ...b.stlpce, ...b.riadky.flat(), ...(b.poznamka ? [b.poznamka] : [])];
+      case 'zaznam':
+        return [b.nadpis, ...b.polia.flatMap((p) => [p.nazov, p.hodnota])];
+      case 'zoznam':
+        return [...(b.nadpis ? [b.nadpis] : []), ...b.polozky];
+      case 'podklad': {
+        const p = podklady.find((x) => x.id === b.podklad);
+        return p ? textyBlokov(p.bloky, []) : [];
+      }
+      default:
+        return [];
+    }
+  });
+}
+
+/** Rýchlosť čítania pracovného textu a čas na jedno rozhodnutie, z ktorých sa odhaduje trvanie. */
+const SLOV_ZA_MINUTU = 200;
+const SEKUND_NA_ROZHODNUTIE = 10;
+
+/**
+ * Odhad trvania scenára na najkratšej ceste k správnemu záveru bez spätnej väzby: počet
+ * rozhodnutí a minúty (čítanie zadania, krokov, všetkých možností a súhrnu). Chybné vetvy trvajú dlhšie.
+ */
+export function odhadTrvania(scenar: Scenar): { rozhodnutia: number; minuty: number } {
+  const predchodca = new Map<Id, Id | null>([[scenar.vstupnyUzol, null]]);
+  const front: Id[] = [scenar.vstupnyUzol];
+  let ciel: ZaverecnyUzol | undefined;
+  while (front.length > 0 && !ciel) {
+    const id = front.shift()!;
+    const u = scenar.uzly.find((x) => x.id === id);
+    if (!u) continue;
+    if (u.typ === 'zaver') {
+      if (u.vysledok === 'spravne') ciel = u;
+      continue;
+    }
+    for (const m of u.moznosti) {
+      const dalsi = scenar.uzly.find((x) => x.id === m.dalsi);
+      if (dalsi?.typ === 'rozhodnutie' && dalsi.spatnaVazba) continue;
+      if (!predchodca.has(m.dalsi)) {
+        predchodca.set(m.dalsi, id);
+        front.push(m.dalsi);
+      }
+    }
+  }
+  if (!ciel) return { rozhodnutia: 0, minuty: 0 };
+
+  const cesta: RozhodovaciUzol[] = [];
+  for (let id = predchodca.get(ciel.id); id; id = predchodca.get(id)) {
+    const u = scenar.uzly.find((x) => x.id === id);
+    if (u?.typ === 'rozhodnutie') cesta.unshift(u);
+  }
+  const texty = [
+    ...scenar.zadanie,
+    ...cesta.flatMap((u) => [u.nadpis, u.uloha, ...textyBlokov(u.pribeh, scenar.podklady), ...u.moznosti.map((m) => m.text)]),
+    ciel.nadpis,
+    ...textyBlokov(ciel.pribeh, scenar.podklady),
+    ...ciel.vysvetlenie,
+  ];
+  const minuty = pocetSlov(texty) / SLOV_ZA_MINUTU + (cesta.length * SEKUND_NA_ROZHODNUTIE) / 60;
+  return { rozhodnutia: cesta.length, minuty: Math.max(1, Math.round(minuty)) };
 }

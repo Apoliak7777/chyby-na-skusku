@@ -1,105 +1,53 @@
 # Overenie
 
-Skutočne vykonané kontroly prvej verzie (16. 9. 2026, Windows 11, Node 26.3.0, npm 11.16.0).
+Skutočne vykonané kontroly po prerábke predajného webu a ukážky a po pridaní pohybu (26. 10. 2026, Windows 11, Node 26.3.0, npm 11.16.0).
 
 ## Automatické kontroly
 
 | Kontrola | Príkaz | Výsledok |
 |---|---|---|
-| Typy | `npm run typecheck` (TypeScript 5.9.3, strict, `noUncheckedIndexedAccess`) | bez chýb |
+| Typy | `npm run typecheck` (TypeScript 5.9, strict) | bez chýb |
 | Validácia scenárov | `npm run validate` | 3 scenáre, 0 chýb, 0 upozornení |
-| Jednotkové testy | `npm test` (Vitest 5.0.1) | 5 súborov, 59 testov, všetky prešli |
-| Produkčný build | `npm run build` (Vite 8.3.0) | `dist/`: index.html 1,2 kB, CSS 15,8 kB, JS 314,7 kB (gzip 94,9 kB) |
-| Koncový test | `npm run test:e2e` (Playwright 1.63.0, Chromium headless) | 3 testy, všetky prešli |
+| Jednotkové testy | `npm test` (Vitest 5) | 10 súborov, 112 testov, všetky prešli |
+| Produkčný build | `npm run build` (Vite 8) | `dist/`: index.html 5,0 kB, CSS 50 kB (gzip 10,5 kB), JS 410 kB (gzip 118 kB) |
+| Koncové testy | `npm run test:e2e` (build + Playwright, Chromium headless, bez pohybu) | 24 testov, všetky prešli; tie isté testy so zapnutým pohybom tiež 24 z 24 |
+| Výkon s pohybom | mobil 390 px, CPU 4×, sieť 1,6 Mb/s, bez cache | CLS 0, LCP okolo 2,1 s s pohybom aj bez neho |
+| Klientsky build | `npm run build:klient -- <kópia dema s rezim 'klient'>` | prešiel aj s kontrolou výstupu: noindex, titulok tréningu, v JS ani v súboroch nič z predajného webu |
+| Podmienky v PDF | `npm run podmienky` | jedna strana A4 |
 
 ### Čo jednotkové testy overujú
 
-- **Engine pokusu** (`src/engine/pokus.test.ts`): čistý štart; odmietnutie neznámej možnosti a rozhodnutia
-  po závere; správna cesta = všetko správne na prvý pokus bez nákladu; oprava po spätnej väzbe =
-  „opravené“; chybný záver má náklad len na svojej vetve a nedotknuté body sú nevyriešené; návrat ku
-  kroku odstráni nasledujúcu vetvu vrátane nákladov a stavov bodov; náklad sa po návrate a novom
-  výbere nezdvojí; nový pokus začína odznova; číselný vstup (3 → správna rekapitulácia, 18 → 108 kusov,
-  iné → záchytná možnosť, mimo rozsahu → chyba).
-- **Validácia** (`src/engine/validacia.test.ts`): demo prechádza bez chýb a upozornení; odhalenie
-  neexistujúceho cieľa, duplicitných ID, cyklu, uzla bez možností, chýbajúcej bezchybnej cesty,
-  nesplniteľného kontrolného bodu, neexistujúceho bodu v účinkoch, neexistujúceho podkladu, číselného
-  vstupu bez záchytnej možnosti, hodnôt bez vstupu, záporného nákladu, viac než 4 možností;
-  upozornenia na nedosiahnuteľný uzol a správny záver s nákladom.
-- **Dáta dema** (`src/data/demo/scenare.test.ts`): každá cesta každého scenára sa dá dokončiť; bezchybná
-  cesta má 2 až 4 rozhodnutia; modelový náklad je len na vetvách s chybným záverom a správny záver
-  je bez nákladu; chybný záver nikdy nemá všetky body správne; náklady v dátach sú presne 120 €, 45 €,
-  65 €; výpočty scenára 2 (18 ÷ 6 = 3, 3 × 84 = 252, 18 × 6 = 108, 18 × 84 = 1 512, 84 ÷ 6 = 14)
-  a zhoda textov rekapitulácií s nimi; záver rozlišuje náklad na dopravu od ceny objednávky; scenár 3
-  uznáva obe poradia (overiť / zastaviť); prepísanie hlavičky bez štítku nevedie k správnemu záveru;
-  prísľub bez kontroly vedie do spätnej väzby a expres stojí 120 €.
-- **Dopyt** (`src/web/dopyt_text.test.ts`): validácia polí, text dopytu so všetkými údajmi a balíčkom,
-  `mailto:` odkaz s korektne zakódovaným predmetom a telom (diakritika, nové riadky, bez `+`).
-- **Router** (`src/router.test.ts`): prázdny hash, kotvy sekcií, cesty dema s parametrami.
+- **Engine pokusu** (`src/engine/pokus.test.ts`): štart, vyhodnotenie, návrat ku kroku bez zdvojenia nákladov, číselný vstup.
+- **Validácia** (`src/engine/validacia.test.ts`): chyby a upozornenia dátového modelu vrátane typickej chyby a reťaze následkov.
+- **Dáta ukážky** (`src/data/demo/scenare.test.ts`): každá cesta sa dá dokončiť, náklady len na chybných vetvách, výpočty scenára 2,
+  možnosti bez sumy a zdôvodnenia, závery netvrdia kroky, ktoré návštevník neurobil, texty z hero ostali.
+- **Sadzba** (`src/engine/sadzba.test.ts`, `src/web/sadzba.test.ts`): jednopísmenové predložky, „s. r. o.“, dátumy, čísla s jednotkou, kódy.
+- **Dopyt a kontakt** (`src/web/dopyt_text.test.ts`): validácia jednej vety, text e-mailu, ceny, `mailto:` s CRLF a diakritikou, odkaz pre vedúceho.
+- **Živá ukážka v hero** (`src/web/mini_nahlad.test.ts`): čísla zhodné so skladovým prehľadom situácie 1, odkazy na existujúce možnosti.
+- **JSON-LD** (`src/jsonld.test.ts`): ceny ponúk v `index.html` sedia s `src/config/znacka.ts`, bez hodnotení.
+- **Router** (`src/router.test.ts`): kotvy, cesty ukážky, neplatné kódovanie v adrese nezhodí stránku.
+- **Pohyb** (`src/pohyb.test.ts`): kedy sa pohyb zapne, odhalenie raz, séria s obmedzeným poradím, prvok nad oknom alebo pod hlavičkou nečaká, fokus odhalí hneď, bez IntersectionObserver je všetko viditeľné.
 
-### Čo overuje koncový test (`e2e/demo.spec.ts`)
+### Čo overujú koncové testy
 
-1. Web: H1, poznámka „Bez registrácie…“, ceny 690 / 1 900 / 490 €, na stránke nie je „zadarmo“ ani
-   „referencie“. Náhľad situácie: chybná voľba ukáže následok, odkaz otvorí demo s už zvoleným prvým
-   krokom (`?prva=`), zobrazí sa spätná väzba a „Rozhodnutie č. 2“.
-2. Oprava po spätnej väzbe → správna cesta → súhrn „Zvládnuté po oprave“ s bodom „opravené po spätnej
-   väzbe“, bez modelového nákladu, s tlačidlom tlače.
-3. Návrat k rozhodnutiu č. 1 odstráni celú vetvu; správna cesta končí „Zvládnuté“ so 4 bodmi
-   správne na prvý pokus.
-4. Situácia 2: číselný vstup 18 → živý prepočet „18 bal = 108 ks · 1 512 €“ → potvrdenie → „Chyba
-   s následkom“ s „Modelový následok tejto vetvy: 45 €“; „Skúsiť scenár znova“ dá čistý stav
-   s oddeleným „Predchádzajúci pokus“; hodnota 0 sa odmietne hláškou; 3 → „Zvládnuté“.
-5. Prehľad tréningu ukazuje výsledky a jednu nedokončenú situáciu.
-6. Dopyt: pripraví text s údajmi, nadpis „Dopyt je pripravený. Odošlite ho zo svojho e-mailu.“,
-   na stránke nie je „Dopyt bol odoslaný“; prázdny formulár nahlási chyby pri poliach.
-7. Mobil 360 × 740 px: web, prehľad situácií a scenár bez vodorovného pretekania; podklady sú za
-   prepínačom, záložky fungujú, po otvorení stále bez pretekania.
-8. Klávesnica: možnosť sa zvolí Tabom a Enterom, fokus prejde na nadpis nového uzla, Tab pokračuje na
-   tlačidlo.
-9. Počas celého behu žiadna chyba v konzole ani chyba stránky (`pageerror`).
-
-## Redizajn predajného webu (16. 9. 2026, druhé kolo)
-
-Po prestavbe webu (nové písmo a ikony ako lokálne balíky, plávajúca hlavička, hero s ukážkou, bento,
-cena s odporúčaným balíkom) prebehli všetky automatické kontroly znova s rovnakým výsledkom: typy bez
-chýb, 59 jednotkových testov, validácia 0/0, build (CSS 30,7 kB, JS 400,1 kB vrátane ikon a písma
-v troch podmnožinách), 3 koncové testy. Navyše:
-
-- Sonda pretekania na 360 px (`getBoundingClientRect` každého prvku) odhalila dekoratívny kruh
-  veľkej dlaždice bento, ktorý presahoval o 43 px; opravené (`overflow: hidden`), šírka dokumentu = 360.
-- Hlavička na mobile: značka sa orezávala tlačidlom; tlačidlo má na úzkych obrazovkách krátky štítok
-  („Ukážka“) a prístupný názov ostáva „Vyskúšať ukážku“.
-- Kontrola textov webu: žiadne pomlčky ako dekorácia, žiadne „zadarmo“, žiadne referencie ani
-  vymyslené čísla; čísla v dlaždici (12 / 9 / 3) sú z dát prvej situácie.
-- Snímky sa robia s `reducedMotion: 'reduce'`, aby celostránkový záber ukázal konečný stav sekcií
-  (odhaľovanie pri skrolovaní inak necháva spodné sekcie v počiatočnom stave).
+- `e2e/web.spec.ts`: nadpis a titulok, pravidlá obsahu (nič zadarmo, nič „odoslané“, bez dekoratívnych pomlčiek), živá ukážka
+  v hero (rezervácie až po voľbe, fokus, stabilná poloha), tri chyby vedú do svojich situácií, snímky sa načítajú, kontakt
+  (`mailto:`, skopírovanie adresy, krátky formulár bez predstieraného odoslania), podmienky, ochrana údajov, pás z mailu, skip link
+  v ukážke, krátka stránka bez pásu pod pätičkou, mobil 360, 390 a 414 px bez pretekania.
+- `e2e/demo.spec.ts`: chybná voľba z hero, spätná väzba, oprava, súhrn s blokom pre majiteľa a typickou chybou, návrat ku kroku,
+  číselný vstup, „Čo uvidí vedúci“ (výzva až po dokončenej situácii, tlač na A4), voľba z adresy po rozpracovanom pokuse,
+  klávesnica, mobil 360 a 390 px (prvá voľba na prvej obrazovke, nadpisy nie pod hlavičkou), bez chýb konzoly.
 
 ## Ručné kontroly
 
-- Snímky obrazovky `node scripts/nahlady.mjs` (Chromium headless, 1280 px a 360 px, tlač):
-  predajný web, prehľad situácií, scenár 1 na začiatku a po chybnej voľbe, číselný vstup scenára 2,
-  súhrn s chybou, mobilný web, mobilný scenár s otvorenými podkladmi, tlačový režim súhrnu, pripravený
-  dopyt. Skript zároveň meria šírku dokumentu – bez pretekania, bez chýb v konzole.
-- Vizuálne skontrolované z náhľadov: hlavička a navigácia na desktope, hero, náhľad situácie
-  s e-mailom a skladom vedľa seba, možnosti A/B, prehrávač s podkladmi v pravom stĺpci (na mobile
-  pod prepínačom, otvorená záložka dôležitá pre krok), súhrn s verdiktom, kontrolnými bodmi, cestou
-  rozhodnutí a tlačidlami, tlačový režim bez hlavičky, pätičky a tlačidiel.
-- Text stránky a titulky skontrolované v náhľade buildu (`npm run preview`); vizuálne dôkazy sú
-  zo snímok z Playwrightu.
+- Snímky celej stránky a ukážky pri šírkach 360, 390, 414, 768, 1366 a 1920 px, tlač súhrnu a prehľadu.
+- Pohyb: snímky v časových bodoch animácií (hero, živá ukážka, scroll, pečiatka verdiktu), bez JS, pri tlači a pri reduced motion nič skryté, rýchly scroll tam a späť nič nenechá skryté, pod hlavičkou po prechode do ukážky žiadne zvyšky textu.
+- Nezávislá kontrola vizuálu, textov, kódu a čistoty repa; nálezy opravené okrem rozhodnutí, ktoré patria poskytovateľovi
+  (meno, IČO, telefón, platobné podmienky, cena prevádzky tréningu).
 
 ## Známe obmedzenia
 
-- **Stav len v pamäti stránky.** Obnovenie stránky alebo zavretie karty začne odznova (demo to hovorí
-  pri štarte). Zámer: nič sa neukladá ani neposiela.
-- **Dopyt bez backendu.** Kým nie je nastavený `kontaktEmail`, formulár len pripraví text na
-  skopírovanie a hovorí, že adresa sa doplní pred publikovaním. `mailto:` funguje len ľuďom
-  s nastaveným e-mailovým programom, preto je hlavná cesta kopírovanie.
-- **Prehliadače:** overené v Chromiu (Playwright). Firefox a Safari neboli testované; kód nepoužíva nič
-  neštandardné (CSS grid, `useSyncExternalStore`, `navigator.clipboard` so záložným výberom textu).
-- **Playwright používa existujúci build Chromia** z priečinka `ms-playwright` (na stroji nie je Chrome
-  a predvolená verzia pre Playwright 1.63 nie je stiahnutá). `playwright.config.ts` ho nájde sám;
-  po `npx playwright install chromium` by použil predvolenú verziu.
-- **Kontrast a čitateľnosť** boli nastavené podľa zvolených farieb (tmavomodrý text na svetlom pozadí,
-  zelenomodrý akcent), automatický audit prístupnosti (napr. axe) sa nespúšťal. Stavy sú vždy
-  označené znakom a textom, nie iba farbou; fokus je viditeľný; pohyb rešpektuje `prefers-reduced-motion`.
-- **Doména, e-mail, DPH, fakturačné údaje** nie sú nastavené (zoznam v `NASADENIE.md`). Lokálne demo
-  a web fungujú aj bez nich.
+- Meno, telefón, IČO a sídlo poskytovateľa sú prázdne (`src/config/znacka.ts`), web ich preto nikde neukazuje.
+- Dopyt sa posiela z e-mailu návštevníka. Na počítači s webovou poštou nemusí `mailto:` nič otvoriť; vedľa je preto skopírovanie adresy.
+- Web nemeria návštevnosť ani konverzie.
+- Stav ukážky je len v pamäti stránky, po obnovení začína odznova.

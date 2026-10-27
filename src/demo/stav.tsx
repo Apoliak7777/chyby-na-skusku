@@ -13,7 +13,7 @@ import {
 
 /**
  * Stav dema: aktuálne pokusy a posledné dokončené pokusy pre každý scenár.
- * Drží sa výhradne v pamäti stránky – nič sa neukladá ani neposiela.
+ * Drží sa výhradne v pamäti stránky. Nič sa neukladá ani neposiela.
  */
 
 export interface DokoncenyPokus {
@@ -29,8 +29,10 @@ interface DemoKontext {
   /** Posledný dokončený pokus (na porovnanie s aktuálnym, zreteľne oddelený). */
   posledneDokoncene(scenarId: Id): DokoncenyPokus | undefined;
   zacniOdznova(scenar: Scenar): void;
+  /** Čistý pokus s už zvoleným prvým rozhodnutím (voľba z náhľadu na predajnom webe). */
+  zacniSVolbou(scenar: Scenar, moznostId: Id): void;
   vyber(scenar: Scenar, moznostId: Id, hodnota?: number): void;
-  /** Môže vyhodiť chybu (hodnota mimo rozsahu) – volajúci ju zobrazí. */
+  /** Môže vyhodiť chybu (hodnota mimo rozsahu), volajúci ju zobrazí. */
   zadaj(scenar: Scenar, hodnota: number): void;
   vratSa(scenar: Scenar, index: number): void;
 }
@@ -56,6 +58,7 @@ export function DemoProvider({ trening, children }: { trening: Trening; children
       pokus,
       posledneDokoncene: (id) => dokoncene[id],
       zacniOdznova: (scenar) => setPokusy((p) => ({ ...p, [scenar.id]: novyPokus(scenar) })),
+      zacniSVolbou: (scenar, moznostId) => uloz(scenar, engineVyberMoznost(scenar, novyPokus(scenar), moznostId)),
       vyber: (scenar, moznostId, h) => uloz(scenar, engineVyberMoznost(scenar, pokus(scenar), moznostId, h)),
       zadaj: (scenar, h) => uloz(scenar, engineZadajHodnotu(scenar, pokus(scenar), h)),
       vratSa: (scenar, index) => setPokusy((p) => ({ ...p, [scenar.id]: vratSaKuKroku(scenar, p[scenar.id] ?? novyPokus(scenar), index) })),

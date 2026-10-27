@@ -150,6 +150,11 @@ export interface ZaverecnyUzol {
   pribeh: Blok[];
   /** Rozhodujúce kroky, ktoré súhrn vysvetlí. */
   vysvetlenie: string[];
+  /**
+   * Následok ako reťaz práce, krátke položky (napr. „doprava späť 45 € (modelová suma)“, „dobropis“).
+   * Platí pre každú cestu k tomuto záveru; suma len taká, akú vetva naozaj má.
+   */
+  retazNasledku?: string[];
 }
 
 export type Uzol = RozhodovaciUzol | ZaverecnyUzol;
@@ -169,7 +174,7 @@ export interface Scenar {
   id: Id;
   verzia: string;
   nazov: string;
-  /** Jedna–dve vety na predajný web a do prehľadu situácií. */
+  /** Jedna až dve vety na predajný web a do prehľadu situácií. Nemá prezradiť správnu odpoveď. */
   strucnyProblem: string;
   pozicia: string;
   /** Čo sa precvičuje. */
@@ -181,6 +186,11 @@ export interface Scenar {
   uzly: Uzol[];
   kontrolneBody: KontrolnyBod[];
   schvalenie: SchvalenieObsahu;
+  /**
+   * ID možnosti, ktorou začína typická chyba nováčika v tejto situácii. Súhrn z nej odvodí najkratšiu
+   * cestu k záveru s výsledkom chyba a ukáže jeho reťaz následkov (aj po bezchybnom pokuse).
+   */
+  typickaChyba?: Id;
 }
 
 export interface Znacka {
@@ -200,6 +210,6 @@ export interface Trening {
   rezim: 'demo' | 'klient';
   znacka: Znacka;
   scenare: Scenar[];
-  /** Upozornenie pri štarte (napr. že obnovenie stránky začne odznova). */
+  /** Drobná poznámka dole v prehľade situácií (v deme: výsledky sú len v otvorenej stránke a po obnovení zmiznú). */
   upozornenie?: string;
 }

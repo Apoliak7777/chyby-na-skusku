@@ -18,10 +18,19 @@ export interface Trasa {
   kotva: string | null;
 }
 
+/** Neplatné kódovanie (napr. „#100%“ z pokazeného odkazu) nesmie zhodiť stránku: ostane text, ako prišiel. */
+function dekoduj(text: string): string {
+  try {
+    return decodeURIComponent(text);
+  } catch {
+    return text;
+  }
+}
+
 export function parsujHash(hash: string): Trasa {
   const bezMriezky = hash.startsWith('#') ? hash.slice(1) : hash;
   if (!bezMriezky.startsWith('/')) {
-    return { cesta: '/', params: new URLSearchParams(), kotva: bezMriezky ? decodeURIComponent(bezMriezky) : null };
+    return { cesta: '/', params: new URLSearchParams(), kotva: bezMriezky ? dekoduj(bezMriezky) : null };
   }
   const [cestaCast, dotaz = ''] = bezMriezky.split('?', 2) as [string, string?];
   const cesta = cestaCast.length > 1 ? cestaCast.replace(/\/+$/, '') : cestaCast;
@@ -50,5 +59,7 @@ export const CESTY = {
   web: '#/',
   demo: '#/demo',
   prehlad: '#/demo/prehlad',
+  podmienky: '#/podmienky',
+  ochrana: '#/ochrana-udajov',
   scenar: (id: string, prva?: string) => `#/demo/${id}${prva ? `?prva=${encodeURIComponent(prva)}` : ''}`,
 } as const;

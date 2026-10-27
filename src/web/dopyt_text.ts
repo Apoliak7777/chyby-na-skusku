@@ -1,16 +1,18 @@
-import { balicky, znacka } from '../config/znacka';
+import { balicky, formatEurText, znacka } from '../config/znacka';
 
 /**
  * Príprava dopytu bez backendu: text vzniká v prehliadači, návštevník ho skopíruje
  * alebo (ak je nastavený kontaktný e-mail) otvorí vo svojom e-mailovom programe.
- * Nič sa neodosiela z tejto stránky.
+ * Nič sa neodosiela z tejto stránky. E-mail návštevníka netreba, odpoveď ide na adresu,
+ * z ktorej dopyt pošle.
  */
 
+/** Najdlhší opis situácie: dlhší mailto: odkaz niektoré e-mailové programy orežú alebo neotvoria. */
+export const MAX_DLZKA_SITUACIE = 500;
+
 export interface DopytVstup {
-  firma: string;
-  email: string;
-  pozicia: string;
   situacia: string;
+  firma?: string;
   telefon?: string;
   balicek?: string;
 }
@@ -20,55 +22,49 @@ export interface ChybaPola {
   sprava: string;
 }
 
-const EMAIL_VZOR = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
 export function validujDopyt(v: DopytVstup): ChybaPola[] {
   const chyby: ChybaPola[] = [];
-  if (!v.firma.trim()) chyby.push({ pole: 'firma', sprava: 'Uveďte názov firmy.' });
-  if (!v.email.trim()) chyby.push({ pole: 'email', sprava: 'Uveďte kontaktný e-mail.' });
-  else if (!EMAIL_VZOR.test(v.email.trim())) chyby.push({ pole: 'email', sprava: 'E-mail nemá správny tvar (napr. meno@firma.sk).' });
-  if (!v.pozicia.trim()) chyby.push({ pole: 'pozicia', sprava: 'Uveďte pracovnú pozíciu, ktorú chcete zaškoľovať.' });
-  if (v.situacia.trim().length < 20) {
-    chyby.push({ pole: 'situacia', sprava: 'Opíšte jednu situáciu aspoň jednou-dvoma vetami (najmenej 20 znakov).' });
+  if (v.situacia.trim().length < 5) {
+    chyby.push({ pole: 'situacia', sprava: 'Napíšte aspoň pár slov o tom, kde sa nový človek mýli.' });
   }
   return chyby;
 }
 
 export function nazovBalicka(id: string | undefined): string {
   const b = balicky.find((x) => x.id === id);
-  return b ? `${b.nazov} (${b.cena} €, úvodná ponuka)` : 'ešte neviem, poraďte';
+  return b ? `${b.nazov} (${formatEurText(b.cena)})` : 'ešte neviem, poraďte';
 }
 
 export function zostavDopyt(v: DopytVstup): { predmet: string; telo: string } {
-  const firma = v.firma.trim();
-  const predmet = `Dopyt – ${znacka.nazov} – ${firma}`;
+  const firma = v.firma?.trim() ?? '';
+  const predmet = firma ? `Dopyt: ${znacka.nazov}, ${firma}` : `Dopyt: ${znacka.nazov}`;
   const riadky = [
     `Dobrý deň,`,
     ``,
-    `máme záujem o tréning pracovných rozhodnutí pre našu firmu.`,
-    ``,
-    `Firma: ${firma}`,
-    `Kontaktný e-mail: ${v.email.trim()}`,
-    `Telefón: ${v.telefon?.trim() || 'neuvedený'}`,
-    `Pracovná pozícia na zaškolenie: ${v.pozicia.trim()}`,
-    `Balíček, ktorý nás zaujíma: ${nazovBalicka(v.balicek)}`,
-    ``,
-    `Situácia, ktorú chceme precvičiť:`,
+    `nový človek sa u nás najčastejšie pomýli takto:`,
     v.situacia.trim(),
     ``,
-    `Prosíme o návrh ďalšieho postupu.`,
+    `Firma: ${firma || 'neuvedená'}`,
+    `Telefón: ${v.telefon?.trim() || 'neuvedený'}`,
+    `Zaujíma nás: ${nazovBalicka(v.balicek)}`,
+    ``,
+    `Prosím o ponuku.`,
     ``,
     `S pozdravom`,
     firma,
   ];
-  return { predmet, telo: riadky.join('\n') };
+  return { predmet, telo: riadky.join('\n').trimEnd() };
 }
 
-/** mailto: odkaz s korektne zakódovaným predmetom a telom. */
+/**
+ * mailto: odkaz s korektne zakódovaným predmetom a telom. Bez adresy vznikne odkaz len
+ * s predmetom a telom (adresáta doplní návštevník).
+ */
 export function mailtoOdkaz(adresa: string, predmet: string, telo: string): string {
   const params = new URLSearchParams();
   params.set('subject', predmet);
-  params.set('body', telo);
+  // RFC 6068: nový riadok v tele je CRLF, inak ho niektoré staršie programy zlúčia.
+  params.set('body', telo.replace(/\r?\n/g, '\r\n'));
   // URLSearchParams kóduje medzery ako '+', e-mailové programy čakajú %20.
   return `mailto:${adresa}?${params.toString().replace(/\+/g, '%20')}`;
 }

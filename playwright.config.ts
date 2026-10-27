@@ -4,7 +4,10 @@ import path from 'node:path';
 
 /**
  * Koncový test beží nad produkčným buildom (vite preview), naslepo, v Chromiu.
- * Spustenie: npm run test:e2e (najprv sa spraví build).
+ * Spustenie: npm run test:e2e (skript najprv spraví čerstvý build do dist/, potom spustí testy).
+ * Samotné „npx playwright test“ build nerobí a testuje dist/, ktorý práve je.
+ * Lokálne sa použije už bežiaci náhľad na porte 4177 (musí ukazovať na rovnaký dist/);
+ * v CI sa server spúšťa vždy nanovo.
  *
  * Na tomto stroji nie je Chrome; ak Playwright nemá stiahnutú vlastnú verziu Chromia,
  * použije sa najnovší už stiahnutý build z priečinka ms-playwright (napr. z playwright-cli).
@@ -54,12 +57,15 @@ export default defineConfig({
     headless: true,
     locale: 'sk-SK',
     viewport: { width: 1280, height: 900 },
+    // Testy bežia bez animácií, aby boli polohy a viditeľnosť hneď konečné. Pohyb overuje
+    // samostatný test v e2e/web.spec.ts s reducedMotion: 'no-preference'.
+    reducedMotion: 'reduce',
     ...(executablePath ? { launchOptions: { executablePath } } : {}),
   },
   webServer: {
     command: 'npx vite preview --port 4177 --strictPort --host 127.0.0.1',
     url: 'http://127.0.0.1:4177',
-    reuseExistingServer: true,
+    reuseExistingServer: !process.env.CI,
     timeout: 60_000,
   },
 });

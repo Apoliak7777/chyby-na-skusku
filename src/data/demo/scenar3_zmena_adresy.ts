@@ -9,16 +9,13 @@ export const NAKLAD_OPAKOVANEJ_DOPRAVY = 65;
 
 export const zmenaAdresy: Scenar = {
   id: 'zmena-adresy',
-  verzia: '1.0',
+  verzia: '1.1',
   nazov: 'Zmena adresy na poslednú chvíľu',
-  strucnyProblem:
-    'Zákazník mení dodaciu adresu. Zásielka je vychystaná, štítok vytlačený, odvoz o 15:00. Prepísať adresu v systéme nestačí.',
+  strucnyProblem: 'Zákazníčka mení dodaciu adresu. Zásielka je už vychystaná a odvoz je o 15:00. Ako zmenu vybavíte?',
   pozicia: 'Pracovník príjmu objednávok',
-  cvici: 'Dokončenie zmeny objednávky vrátane skladu a prepravných údajov.',
-  zadanie: [
-    'Je štvrtok, 13:10. Objednávka D-1042 je vychystaná na rampe, prepravný štítok je vytlačený a dopravca ju preberie o 15:00. Práve prišiel e-mail so žiadosťou o zmenu dodacej adresy.',
-    'Vašou úlohou je zmenu dokončiť tak, aby zásielka odišla na správne miesto – a zákazníkovi to potvrdiť až vtedy, keď to platí.',
-  ],
+  cvici: 'dokončenie zmeny objednávky vrátane skladu a prepravných údajov.',
+  zadanie: ['Štvrtok 13:10. Objednávka D-1042 je vychystaná na rampe a dopravca ju preberie o 15:00. Práve prišiel e-mail so žiadosťou o zmenu dodacej adresy.'],
+  typickaChyba: 's3-start-hlavicka',
   podklady: [
     {
       id: 's3-email',
@@ -27,9 +24,9 @@ export const zmenaAdresy: Scenar = {
       bloky: [
         {
           typ: 'email',
-          od: 'Mgr. Jana Kováčová, nákup, Montáže Ďurica s. r. o. (modelový zákazník)',
+          od: 'Mgr. Jana Kováčová, nákup, Montáže Ďurica s. r. o.',
           komu: 'príjem objednávok, DEMO DISTRIBÚCIA',
-          predmet: 'Zmena dodacej adresy – objednávka D-1042',
+          predmet: 'Zmena dodacej adresy, objednávka D-1042',
           datum: 'štvrtok 13:10',
           text: [
             'Dobrý deň,',
@@ -71,7 +68,7 @@ export const zmenaAdresy: Scenar = {
           typ: 'text',
           text: [
             'D-1042 je vychystaná na rampe 2. Štítok bol vytlačený o 12:20 na adresu Sklad A. Dopravca preberá zásielky o 15:00.',
-            'Sklad expeduje podľa vytlačeného štítku. Zmena adresy v systéme štítok automaticky nepretlačí – sklad musí dostať pokyn a starý štítok vymeniť.',
+            'Sklad expeduje podľa vytlačeného štítku. Zmena adresy v systéme štítok automaticky nepretlačí. Sklad musí dostať pokyn a starý štítok vymeniť.',
           ],
         },
       ],
@@ -95,10 +92,8 @@ export const zmenaAdresy: Scenar = {
         },
         {
           typ: 'poznamka',
-          nadpis: 'Modelový následok',
-          text: [
-            'Ak zásielka odíde na pôvodnú adresu, presmerovanie a opakovaná doprava stoja v modelovom prípade 65 €. Suma je ilustračná a platí len pre vetvy, ktoré k nej naozaj vedú.',
-          ],
+          nadpis: 'Následok',
+          text: ['Ak zásielka odíde na pôvodnú adresu, presmerovanie a opakovaná doprava stoja 65 € (modelová suma).'],
         },
       ],
     },
@@ -108,24 +103,24 @@ export const zmenaAdresy: Scenar = {
       id: 's3-kb-overenie',
       nazov: 'Overil číslo objednávky a oprávnenú kontaktnú osobu',
       vysvetlenie: 'Zmenu môže žiadať len osoba uvedená v objednávke. Overenie chráni pred zmenou od nesprávnej osoby.',
-      zdrojPravidla: 'Pravidlá firmy, bod 1 (modelové pravidlo zo zadania dema)',
+      zdrojPravidla: 'Pravidlá firmy, bod 1',
     },
     {
       id: 's3-kb-expedicia',
       nazov: 'Zastavil expedíciu a zabezpečil výmenu štítku s potvrdením skladu',
-      vysvetlenie: 'Sklad expeduje podľa štítku. Kým expedícia stojí a štítok nie je vymenený, zmena v systéme nič nemení.',
+      vysvetlenie: 'Sklad expeduje podľa štítku. Kým sa štítok nevymení, zmena v systéme nič nemení. Zastavená expedícia na to dáva čas.',
       zdrojPravidla: 'Pravidlá firmy, body 2 a 4; stav expedície',
     },
     {
       id: 's3-kb-fakturacna',
       nazov: 'Zmenil len dodaciu adresu, fakturačnú ponechal',
-      vysvetlenie: 'Zákazník výslovne píše, že fakturačná adresa zostáva. Zmenená by pokazila faktúru.',
+      vysvetlenie: 'Pani Kováčová výslovne píše, že fakturačná adresa zostáva. Zmenená by pokazila faktúru.',
       zdrojPravidla: 'Pravidlá firmy, bod 3; e-mail zákazníka',
     },
     {
       id: 's3-kb-potvrdenie',
       nazov: 'Potvrdil zákazníkovi až po dokončení zmeny',
-      vysvetlenie: 'Potvrdenie, ktoré ešte neplatí, je horšie ako žiadne – zákazník sa naň spoľahne.',
+      vysvetlenie: 'Potvrdenie, ktoré ešte neplatí, je horšie ako žiadne. Zákazník sa naň spoľahne.',
       zdrojPravidla: 'Pravidlá firmy, bod 5',
     },
   ],
@@ -143,31 +138,31 @@ export const zmenaAdresy: Scenar = {
         },
       ],
       uloha: 'Je 13:12. Čo urobíte ako prvé?',
-      podklady: ['s3-email', 's3-objednavka', 's3-pravidla'],
+      podklady: ['s3-email', 's3-objednavka'],
       moznosti: [
         {
           id: 's3-start-overit',
-          text: 'Overiť v objednávke D-1042 číslo, stav a to, či je pani Kováčová oprávnená kontaktná osoba.',
+          text: 'Overiť objednávku D-1042 a kontaktnú osobu.',
           dalsi: 's3-po-overeni',
           nasledok: 'Objednávku a oprávnenie ste overili.',
           ucinky: { 's3-kb-overenie': 'splnene' },
         },
         {
           id: 's3-start-zastavit',
-          text: 'Najprv zavolať na sklad a zastaviť expedíciu D-1042, detaily overiť hneď potom.',
+          text: 'Zavolať na sklad, nech D-1042 zatiaľ nepúšťajú.',
           dalsi: 's3-zastavene-prv',
           nasledok: 'Expedícia stojí, zásielka neodíde.',
         },
         {
           id: 's3-start-predcasne',
-          text: 'Odpísať pani Kováčovej, že je to vybavené, a zmenu spraviť po obede.',
+          text: 'Odpísať pani Kováčovej „vybavené“ a zmenu zadať po obede.',
           dalsi: 's3-predcasne',
-          nasledok: 'Zákazník dostal potvrdenie, ktoré ešte neplatí.',
+          nasledok: 'Zákazníčka dostala potvrdenie, ktoré ešte neplatí.',
           ucinky: { 's3-kb-potvrdenie': 'nesplnene' },
         },
         {
           id: 's3-start-hlavicka',
-          text: 'Prepísať dodaciu adresu v hlavičke objednávky a odpísať, že je zmenené.',
+          text: 'Prepísať dodaciu adresu v objednávke a odpísať pani Kováčovej, že je zmenená.',
           dalsi: 's3-len-hlavicka',
           nasledok: 'Zmenili ste hlavičku, štítok ostal starý.',
           ucinky: { 's3-kb-fakturacna': 'splnene', 's3-kb-expedicia': 'nesplnene', 's3-kb-potvrdenie': 'nesplnene' },
@@ -192,13 +187,13 @@ export const zmenaAdresy: Scenar = {
       moznosti: [
         {
           id: 's3-overene-zastavit',
-          text: 'Zavolať na sklad: zastaviť expedíciu D-1042, zásielka nesmie odísť, kým sa nevymení štítok.',
+          text: 'Zavolať na sklad a zastaviť expedíciu D-1042.',
           dalsi: 's3-uprava-adresy',
           nasledok: 'Expedícia stojí.',
         },
         {
           id: 's3-overene-prepisat',
-          text: 'Prepísať dodaciu adresu v objednávke; sklad uvidí zmenu v systéme.',
+          text: 'Prepísať dodaciu adresu v objednávke.',
           dalsi: 's3-upravene-bez-zastavenia',
           nasledok: 'Adresa v systéme je nová, sklad o tom nevie.',
           ucinky: { 's3-kb-expedicia': 'nesplnene' },
@@ -220,14 +215,14 @@ export const zmenaAdresy: Scenar = {
       moznosti: [
         {
           id: 's3-zastavene-overit',
-          text: 'Overiť objednávku D-1042 a oprávnenie pani Kováčovej, potom upraviť adresu.',
+          text: 'Overiť objednávku D-1042 a kontaktnú osobu, potom upraviť adresu.',
           dalsi: 's3-uprava-adresy',
           nasledok: 'Objednávku a oprávnenie ste overili.',
           ucinky: { 's3-kb-overenie': 'splnene' },
         },
         {
           id: 's3-zastavene-diktovat',
-          text: 'Rovno nadiktovať skladu novú adresu z e-mailu, overovanie je zdržanie.',
+          text: 'Nadiktovať skladu novú adresu z e-mailu.',
           dalsi: 's3-bez-overenia',
           nasledok: 'Zmenu ste zadali bez overenia.',
           ucinky: { 's3-kb-overenie': 'nesplnene' },
@@ -244,7 +239,7 @@ export const zmenaAdresy: Scenar = {
           typ: 'text',
           text: [
             'Sklad: „Je to overené? Minulý mesiac nám niekto z inej firmy poslal zmenu adresy omylom a išlo to na zlé miesto.“',
-            'V objednávke D-1042 je pani Kováčová uvedená ako oprávnená osoba – tentoraz to sedí, ale bez overenia ste to nevedeli.',
+            'V objednávke D-1042 je pani Kováčová uvedená ako oprávnená osoba. Tentoraz to sedí, ale bez overenia ste to nevedeli.',
           ],
         },
       ],
@@ -253,14 +248,14 @@ export const zmenaAdresy: Scenar = {
       moznosti: [
         {
           id: 's3-bezoverenia-overit',
-          text: 'Overiť objednávku a oprávnenie teraz a až potom zadať zmenu adresy.',
+          text: 'Overiť objednávku a kontaktnú osobu, potom zadať zmenu.',
           dalsi: 's3-uprava-adresy',
           nasledok: 'Overenie ste doplnili.',
           ucinky: { 's3-kb-overenie': 'splnene' },
         },
         {
           id: 's3-bezoverenia-pokracovat',
-          text: 'Pokračovať bez overenia – e-mail vyzerá dôveryhodne.',
+          text: 'Pokračovať v zmene adresy.',
           dalsi: 's3-uprava-adresy',
           nasledok: 'Pokračovali ste bez overenia.',
         },
@@ -275,7 +270,7 @@ export const zmenaAdresy: Scenar = {
         {
           typ: 'text',
           text: [
-            'Adresa v objednávke je zmenená. O 14:35 volá sklad: „D-1042 má štítok na Sklad A a dopravca príde o 25 minút. V systéme vidím inú adresu, ale štítok je vytlačený – čo platí?“',
+            'Adresa v objednávke je zmenená. O 14:35 volá sklad: „D-1042 má štítok na Sklad A a dopravca príde o 25 minút. V systéme vidím inú adresu, ale štítok je vytlačený. Čo platí?“',
           ],
         },
       ],
@@ -284,14 +279,14 @@ export const zmenaAdresy: Scenar = {
       moznosti: [
         {
           id: 's3-bezzastavenia-zastavit',
-          text: 'Zastaviť expedíciu a požiadať sklad o výmenu štítku s potvrdením.',
+          text: 'Požiadať sklad, nech zásielku zadrží a vymení štítok.',
           dalsi: 's3-potvrdenie-skladu',
           nasledok: 'Sklad zásielku zadržal a mení štítok.',
           ucinky: { 's3-kb-expedicia': 'splnene' },
         },
         {
           id: 's3-bezzastavenia-poslat',
-          text: 'Povedať skladu, nech to pošle – dopravca si adresu prečíta zo systému.',
+          text: 'Povedať skladu, nech zásielku odovzdá dopravcovi.',
           dalsi: 's3-koniec-odislo',
           nasledok: 'Zásielka odišla so starým štítkom.',
           naklad: NAKLAD_OPAKOVANEJ_DOPRAVY,
@@ -306,7 +301,7 @@ export const zmenaAdresy: Scenar = {
         {
           typ: 'text',
           text: [
-            'Expedícia D-1042 stojí. Otvorili ste editáciu objednávky. Na zásielke na rampe je stále štítok na Sklad A – sklad expeduje podľa štítku, nie podľa hlavičky.',
+            'Expedícia D-1042 stojí. Otvorili ste editáciu objednávky. Na zásielke na rampe je stále štítok na Sklad A. Sklad expeduje podľa štítku, nie podľa hlavičky.',
           ],
         },
         { typ: 'podklad', podklad: 's3-objednavka' },
@@ -316,23 +311,23 @@ export const zmenaAdresy: Scenar = {
       moznosti: [
         {
           id: 's3-uprava-len-dodacia',
-          text: 'Zmeniť len dodaciu adresu na Sklad B, Logistická 22 a hneď požiadať sklad o výmenu štítku s potvrdením.',
+          text: 'Zmeniť dodaciu adresu a požiadať sklad o výmenu štítku.',
           dalsi: 's3-potvrdenie-skladu',
           nasledok: 'Dodacia adresa je nová, fakturačná pôvodná, sklad mení štítok.',
           ucinky: { 's3-kb-fakturacna': 'splnene', 's3-kb-expedicia': 'splnene' },
         },
         {
           id: 's3-uprava-obe',
-          text: 'Zmeniť dodaciu aj fakturačnú adresu na Sklad B, nech je všetko jednotné, a požiadať sklad o výmenu štítku.',
+          text: 'Zmeniť dodaciu aj fakturačnú adresu a požiadať sklad o výmenu štítku.',
           dalsi: 's3-fakturacna-zmenena',
           nasledok: 'Zmenili ste aj fakturačnú adresu.',
           ucinky: { 's3-kb-fakturacna': 'nesplnene', 's3-kb-expedicia': 'splnene' },
         },
         {
           id: 's3-uprava-bez-stitku',
-          text: 'Zmeniť len dodaciu adresu a odpísať zákazníkovi, že je hotovo – sklad si štítok vymení podľa systému.',
+          text: 'Zmeniť dodaciu adresu a odpísať pani Kováčovej, že je hotovo.',
           dalsi: 's3-predcasne-stitok',
-          nasledok: 'Zákazník má potvrdenie, sklad nemá pokyn.',
+          nasledok: 'Zákazníčka má potvrdenie, sklad nemá pokyn.',
           ucinky: { 's3-kb-fakturacna': 'splnene', 's3-kb-expedicia': 'nesplnene', 's3-kb-potvrdenie': 'nesplnene' },
         },
       ],
@@ -355,14 +350,14 @@ export const zmenaAdresy: Scenar = {
       moznosti: [
         {
           id: 's3-fakturacna-vratit',
-          text: 'Vrátiť fakturačnú adresu na pôvodnú, zmenená ostane len dodacia.',
+          text: 'Vrátiť fakturačnú adresu na pôvodnú.',
           dalsi: 's3-potvrdenie-skladu',
           nasledok: 'Fakturačná adresa je späť pôvodná.',
           ucinky: { 's3-kb-fakturacna': 'splnene' },
         },
         {
           id: 's3-fakturacna-nechat',
-          text: 'Nechať obe adresy zmenené, zákazník si to prípadne opraví.',
+          text: 'Nechať obe adresy tak, ako sú.',
           dalsi: 's3-potvrdenie-skladu',
           nasledok: 'Faktúra pôjde s nesprávnou adresou.',
         },
@@ -377,7 +372,7 @@ export const zmenaAdresy: Scenar = {
         {
           typ: 'text',
           text: [
-            'O 14:50 volá sklad: „D-1042 ide o desať minút, štítok máme na Sklad A. Nikto nám nepovedal, že sa má meniť.“ Zákazník má od vás potvrdenie, že zmena je hotová.',
+            'O 14:50 volá sklad: „D-1042 stojí na rampe so štítkom na Sklad A a dopravca príde o desať minút. Pokyn na nový štítok sme nedostali. Pustiť ju?“ Pani Kováčová má od vás potvrdenie, že zmena je hotová.',
           ],
         },
       ],
@@ -386,14 +381,14 @@ export const zmenaAdresy: Scenar = {
       moznosti: [
         {
           id: 's3-predcasnestitok-vymenit',
-          text: 'Okamžite požiadať o výmenu štítku a vyžiadať potvrdenie skladu.',
+          text: 'Požiadať sklad, nech zásielku zadrží a vymení štítok.',
           dalsi: 's3-potvrdenie-skladu',
           nasledok: 'Sklad mení štítok na poslednú chvíľu.',
           ucinky: { 's3-kb-expedicia': 'splnene' },
         },
         {
           id: 's3-predcasnestitok-nechat',
-          text: 'Nechať to tak – systém má novú adresu, dopravca sa zorientuje.',
+          text: 'Povedať skladu, nech zásielku pustí.',
           dalsi: 's3-koniec-odislo',
           nasledok: 'Zásielka odišla so starým štítkom.',
           naklad: NAKLAD_OPAKOVANEJ_DOPRAVY,
@@ -415,16 +410,16 @@ export const zmenaAdresy: Scenar = {
       moznosti: [
         {
           id: 's3-potvrdenie-poslat',
-          text: 'Odpovedať pani Kováčovej: zmena dodacej adresy dokončená, fakturačná adresa bez zmeny, sklad potvrdil nový štítok.',
+          text: 'Odpovedať pani Kováčovej, že zmena je dokončená.',
           dalsi: 's3-koniec-spravne',
-          nasledok: 'Zákazník má potvrdenie, ktoré platí.',
+          nasledok: 'Pani Kováčová má potvrdenie, ktoré platí.',
           ucinky: { 's3-kb-potvrdenie': 'splnene' },
         },
         {
           id: 's3-potvrdenie-neposlat',
-          text: 'Nič neposielať – zákazník uvidí novú adresu v sledovaní zásielky.',
+          text: 'Pokračovať ďalšou objednávkou.',
           dalsi: 's3-koniec-bez-potvrdenia',
-          nasledok: 'Zákazník o dokončení nevie.',
+          nasledok: 'Pani Kováčová o dokončení nevie.',
           ucinky: { 's3-kb-potvrdenie': 'nesplnene' },
         },
       ],
@@ -470,7 +465,7 @@ export const zmenaAdresy: Scenar = {
         {
           typ: 'text',
           text: [
-            'Dodacia adresa v hlavičke objednávky je zmenená a zákazník má vaše potvrdenie. Na rampe však leží D-1042 so štítkom na Sklad A – a sklad expeduje podľa štítku, nie podľa hlavičky.',
+            'Dodacia adresa v hlavičke objednávky je zmenená a pani Kováčová má vaše potvrdenie. Na rampe však leží D-1042 so štítkom na Sklad A a sklad expeduje podľa štítku, nie podľa hlavičky.',
           ],
         },
         { typ: 'podklad', podklad: 's3-sklad' },
@@ -480,14 +475,14 @@ export const zmenaAdresy: Scenar = {
       moznosti: [
         {
           id: 's3-hlavicka-zastavit',
-          text: 'Zavolať na sklad: zastaviť expedíciu a vyžiadať výmenu štítku s potvrdením.',
+          text: 'Zavolať na sklad, nech zásielku zadrží a vymení štítok.',
           dalsi: 's3-potvrdenie-skladu',
           nasledok: 'Sklad zásielku zadržal a mení štítok.',
           ucinky: { 's3-kb-expedicia': 'splnene' },
         },
         {
           id: 's3-hlavicka-nechat',
-          text: 'Nechať tak – systém má novú adresu, sklad si to všimne.',
+          text: 'Nechať to tak a pokračovať ďalšou objednávkou.',
           dalsi: 's3-koniec-odislo',
           nasledok: 'Zásielka odišla so starým štítkom.',
           naklad: NAKLAD_OPAKOVANEJ_DOPRAVY,
@@ -503,14 +498,15 @@ export const zmenaAdresy: Scenar = {
         {
           typ: 'text',
           text: [
-            'O 15:00 dopravca prevzal D-1042 so štítkom Sklad B, Logistická 22. Faktúra ide na pôvodnú fakturačnú adresu. Pani Kováčová má potvrdenie s vyjadrením skladu.',
+            'O 15:00 dopravca prevzal D-1042 so štítkom Sklad B, Logistická 22.',
+            'Posledné potvrdenie, ktoré pani Kováčová dostala, prišlo až po potvrdení skladu, takže platí.',
           ],
         },
       ],
       vysvetlenie: [
         'Zmena po vychystaní má tri miesta: objednávka v systéme, štítok na zásielke a informácia pre zákazníka. Hotová je až vtedy, keď sedia všetky tri.',
-        'Poradie overenia a zastavenia expedície môže byť ľubovoľné – dôležité je, že obe prebehli pred odvozom.',
-        'Zákazníkovi ste potvrdili až s potvrdením skladu v ruke. Také potvrdenie platí.',
+        'Overenie objednávky a zastavenie expedície patria pred odvoz. Ich poradie môže byť opačné, ak hrozí, že zásielka odíde.',
+        'Platné je až potvrdenie, ktoré zákazník dostane po potvrdení skladu.',
       ],
     },
     {
@@ -522,40 +518,48 @@ export const zmenaAdresy: Scenar = {
         {
           typ: 'text',
           text: [
-            'O 15:00 zásielka odišla na Sklad A, Priemyselná 10. Sklad A ju odmietol prevziať a dopravca ju presmeroval na Sklad B až na druhý deň. Opakovaná doprava stojí v modelovom prípade 65 €. Zákazník dostal tovar o deň neskôr, než mohol.',
+            'Zásielka odišla o 15:00 na Sklad A, Priemyselná 10, a zákazník dostal tovar o deň neskôr, než mohol.',
+            'Sklad A ju odmietol prevziať a dopravca ju presmeroval na Sklad B až na druhý deň. Opakovaná doprava stojí 65 € (modelová suma).',
           ],
         },
       ],
       vysvetlenie: [
         'Sklad expeduje podľa vytlačeného štítku. Kým nikto nevymení štítok, zmena v systéme ani e-mail zákazníkovi nič nemenia.',
-        'Do odvozu bolo takmer dvoch hodín. Jeden telefonát na sklad – zastaviť expedíciu – zmrazil situáciu a dal čas na všetko ostatné.',
-        'Suma 65 € je ilustračný následok tejto konkrétnej vetvy.',
+        'Do odvozu boli takmer dve hodiny. Zásielka nesmie odísť, kým sklad nepotvrdí nový štítok, a na to stačí jeden telefonát na sklad.',
+      ],
+      retazNasledku: [
+        'zásielka odišla so starým štítkom na Sklad A',
+        'Sklad A ju odmietol prevziať',
+        'presmerovanie a opakovaná doprava: 65 € (modelová suma)',
+        'tovar u zákazníka o deň neskôr',
       ],
     },
     {
       id: 's3-koniec-bez-potvrdenia',
       typ: 'zaver',
-      nadpis: 'Zmena prebehla, zákazník o nej nevedel',
+      nadpis: 'Zmena prebehla, zákazníčka o nej nevedela',
       vysledok: 'komplikacia',
       pribeh: [
         {
           typ: 'text',
           text: [
-            'Zásielka odišla správne na Sklad B. O 16:10 však volá pani Kováčová, či zmena prebehla – potvrdenie nedostala a Sklad B o zásielke nevedel. Zmena bola dokončená, ale zákazník o tom nevedel.',
+            'Zásielka odišla správne na Sklad B, ale potvrdenie po výmene štítku pani Kováčová nedostala.',
+            'O 16:10 volá, či zmena naozaj prebehla. Sklad B o zásielke nevedel.',
           ],
         },
       ],
       vysvetlenie: [
-        'Zákazník písal „ďakujem za potvrdenie“ – čakal odpoveď. Potvrdenie po dokončení zmeny je posledný krok postupu, nie zdvorilosť navyše.',
-        'Zvyšok postupu bol v poriadku: overenie, zastavenie expedície, správna adresa aj vymenený štítok.',
+        'Pani Kováčová písala „Ďakujem za potvrdenie.“ a čakala odpoveď. Potvrdenie po dokončení zmeny je posledný krok postupu, nie zdvorilosť navyše.',
+        'Štítok bol vymenený a sklad to potvrdil. Chýbala správa pre pani Kováčovú, ktorá by to potvrdila.',
       ],
+      retazNasledku: ['telefonát zákazníčky, či zmena prebehla', 'Sklad B o zásielke nevedel'],
     },
   ],
   schvalenie: {
     stav: 'schvalene',
     verziaPravidiel: 'demo-1.0',
-    podklad: 'Zadanie projektu Chyby na skúšku, kapitola 8, scenár 3 (modelové pravidlá)',
-    potvrdil: 'autor zadania (demo)',
+    podklad: 'Pravidlá firmy v podkladoch situácie (modelové pravidlá)',
+    potvrdil: 'autor ukážky',
     datum: '2026-09-15',
   },
 };

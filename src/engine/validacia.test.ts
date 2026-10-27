@@ -91,7 +91,7 @@ describe('validácia odhalí chyby', () => {
 
   it('uzol, z ktorého sa nedá dostať k záveru', () => {
     const s = zakladnyScenar();
-    // Odstránime závery a nahradíme ich slučkou bez konca – najprv cyklus, tak radšej: uzol bez možností.
+    // Slučka bez konca by sa ohlásila ako cyklus, preto radšej uzol bez možností.
     s.uzly.push({ id: 'slepy', typ: 'rozhodnutie', nadpis: 'S', pribeh: [], uloha: '?', moznosti: [] });
     (s.uzly[1] as { moznosti: { dalsi: string }[] }).moznosti[1]!.dalsi = 'slepy';
     expect(chyby(s).join('\n')).toMatch(/nemá žiadnu možnosť/);
@@ -151,6 +151,24 @@ describe('validácia odhalí chyby', () => {
     if (!a || a.typ !== 'rozhodnutie') throw new Error();
     for (let i = 0; i < 3; i++) a.moznosti.push({ id: `x${i}`, text: 'x', dalsi: 'ok' });
     expect(chyby(s).join('\n')).toMatch(/najviac 4/);
+  });
+
+  it('typickú chybu, ktorá neexistuje alebo nevedie k chybnému záveru', () => {
+    const s = zakladnyScenar();
+    s.typickaChyba = 'neexistuje';
+    expect(chyby(s).join('\n')).toMatch(/neexistujúcu možnosť „neexistuje“/);
+    s.typickaChyba = 'b1';
+    expect(chyby(s).join('\n')).toMatch(/nevedie žiadna cesta k záveru s výsledkom „chyba“/);
+    s.typickaChyba = 'a2';
+    expect(chyby(s)).toEqual([]);
+  });
+
+  it('prázdnu položku v reťazi následkov', () => {
+    const s = zakladnyScenar();
+    const zle = s.uzly.find((u) => u.id === 'zle');
+    if (!zle || zle.typ !== 'zaver') throw new Error();
+    zle.retazNasledku = ['doprava späť', ' '];
+    expect(chyby(s).join('\n')).toMatch(/prázdnu položku/);
   });
 });
 

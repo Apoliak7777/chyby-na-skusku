@@ -1,15 +1,16 @@
 import { useId, useRef, useState, type FormEvent } from 'react';
-import { ArrowRight, Copy, PaperPlaneTilt } from '@phosphor-icons/react';
-import { balicky, znacka } from '../config/znacka';
-import { mailtoOdkaz, validujDopyt, zostavDopyt, type ChybaPola, type DopytVstup } from './dopyt_text';
+import { Copy, PaperPlaneTilt } from '@phosphor-icons/react';
+import { balicky, formatEur, znacka } from '../config/znacka';
+import { MAX_DLZKA_SITUACIE, mailtoOdkaz, validujDopyt, zostavDopyt, type ChybaPola, type DopytVstup } from './dopyt_text';
+import { Sadzba } from './sadzba';
 
 /**
- * Formulár dopytu bez predstieraného backendu. Pripraví text, ktorý si návštevník
- * skopíruje alebo otvorí vo svojom e-mailovom programe. Nikdy nehlási „odoslané“.
+ * Krátky formulár dopytu bez predstieraného backendu. Pripraví text, ktorý si návštevník
+ * otvorí vo svojom e-mailovom programe alebo skopíruje. Nikdy nehlási „odoslané“.
  */
-export function Dopyt({ vybranyBalicek, onZmenaBalicka }: { vybranyBalicek: string; onZmenaBalicka: (id: string) => void }) {
+export function Dopyt() {
   const idPrefix = useId();
-  const [vstup, setVstup] = useState<DopytVstup>({ firma: '', email: '', pozicia: '', situacia: '', telefon: '' });
+  const [vstup, setVstup] = useState<DopytVstup>({ situacia: '', firma: '', telefon: '', balicek: '' });
   const [chyby, setChyby] = useState<ChybaPola[]>([]);
   const [pripraveny, setPripraveny] = useState<{ predmet: string; telo: string } | null>(null);
   const [text, setText] = useState('');
@@ -24,8 +25,7 @@ export function Dopyt({ vybranyBalicek, onZmenaBalicka }: { vybranyBalicek: stri
 
   const priprav = (e: FormEvent) => {
     e.preventDefault();
-    const udaje: DopytVstup = { ...vstup, balicek: vybranyBalicek };
-    const najdene = validujDopyt(udaje);
+    const najdene = validujDopyt(vstup);
     setChyby(najdene);
     if (najdene.length > 0) {
       setPripraveny(null);
@@ -33,25 +33,31 @@ export function Dopyt({ vybranyBalicek, onZmenaBalicka }: { vybranyBalicek: stri
       if (prve) document.getElementById(`${idPrefix}-${prve.pole}`)?.focus();
       return;
     }
-    const d = zostavDopyt(udaje);
+    const d = zostavDopyt(vstup);
     setPripraveny(d);
     setText(d.telo);
     setSkopirovane(null);
     window.setTimeout(() => textarea.current?.focus(), 0);
   };
 
+  // Živý región sa pred novou správou vyprázdni, aby čítačka ohlásila aj opakované kopírovanie.
+  const ohlas = (sprava: string) => {
+    setSkopirovane(null);
+    window.setTimeout(() => setSkopirovane(sprava), 60);
+  };
+
   const skopiruj = async () => {
     try {
       if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(pripraveny ? `${pripraveny.predmet}\n\n${text}` : text);
-        setSkopirovane('Text dopytu je skopírovaný. Vložte ho do nového e-mailu.');
+        ohlas(`Text je skopírovaný. Vložte ho do nového e-mailu na ${znacka.kontaktEmail}.`);
         return;
       }
     } catch {
       /* skúsime záložný spôsob */
     }
     textarea.current?.select();
-    setSkopirovane('Text je označený. Skopírujte ho klávesmi Ctrl + C.');
+    ohlas('Text je označený. Skopírujte ho klávesmi Ctrl + C.');
   };
 
   const pole = (
@@ -64,7 +70,8 @@ export function Dopyt({ vybranyBalicek, onZmenaBalicka }: { vybranyBalicek: stri
       viacriadkove?: boolean;
       autoComplete?: string;
       placeholder?: string;
-      inputMode?: 'email' | 'tel' | 'text';
+      inputMode?: 'tel' | 'text';
+      maxDlzka?: number;
     },
   ) => {
     const id = `${idPrefix}-${nazov}`;
@@ -81,6 +88,7 @@ export function Dopyt({ vybranyBalicek, onZmenaBalicka }: { vybranyBalicek: stri
       className: chyba ? 'pole--chybne' : undefined,
       autoComplete: props.autoComplete,
       placeholder: props.placeholder,
+      maxLength: props.maxDlzka,
     };
     return (
       <div className="pole">
@@ -94,13 +102,13 @@ export function Dopyt({ vybranyBalicek, onZmenaBalicka }: { vybranyBalicek: stri
           </p>
         )}
         {props.viacriadkove ? (
-          <textarea {...spolocne} rows={4} onChange={(e) => nastav(nazov, e.target.value)} required={props.povinne} />
+          <textarea {...spolocne} rows={3} onChange={(e) => nastav(nazov, e.target.value)} required={props.povinne} />
         ) : (
           <input
             {...spolocne}
             type={props.typ ?? 'text'}
             inputMode={props.inputMode}
-            spellCheck={props.typ === 'email' || props.typ === 'tel' ? false : undefined}
+            spellCheck={props.typ === 'tel' ? false : undefined}
             onChange={(e) => nastav(nazov, e.target.value)}
             required={props.povinne}
           />
@@ -115,80 +123,63 @@ export function Dopyt({ vybranyBalicek, onZmenaBalicka }: { vybranyBalicek: stri
   };
 
   return (
-    <div className="dopyt">
-      <form className="formular" onSubmit={priprav} noValidate aria-describedby={`${idPrefix}-info`}>
-        <p id={`${idPrefix}-info`} className="tlmeny male">
-          Polia s hviezdičkou sú povinné. Nežiadame prílohy ani osobné údaje vašich zamestnancov.
-        </p>
-        {pole('firma', 'Firma', { povinne: true, autoComplete: 'organization', placeholder: 'napr. Veľkoobchod Novák s. r. o.' })}
-        {pole('email', 'Kontaktný e-mail', { povinne: true, typ: 'email', inputMode: 'email', autoComplete: 'email', placeholder: 'meno@firma.sk' })}
-        {pole('telefon', 'Telefón', { typ: 'tel', inputMode: 'tel', autoComplete: 'tel', placeholder: '+421 …' })}
-        {pole('pozicia', 'Pracovná pozícia na zaškolenie', {
-          povinne: true,
-          autoComplete: 'off',
-          placeholder: 'napr. pracovník príjmu objednávok',
-        })}
-        {pole('situacia', 'Jedna situácia, ktorú chcete precvičiť', {
-          povinne: true,
-          viacriadkove: true,
-          napoveda: 'Čo sa stalo, ako sa to odhalilo a čo mal pracovník urobiť správne. Stačia dve-tri vety.',
-        })}
-        <div className="pole">
-          <label htmlFor={`${idPrefix}-balicek`}>Balíček, ktorý vás zaujíma</label>
-          <select id={`${idPrefix}-balicek`} name="balicek" value={vybranyBalicek} onChange={(e) => onZmenaBalicka(e.target.value)}>
-            <option value="">Ešte neviem, poraďte</option>
-            {balicky.map((b) => (
-              <option key={b.id} value={b.id}>
-                {b.nazov}: {b.cena} € (úvodná cena)
-              </option>
-            ))}
-          </select>
-        </div>
-        <button type="submit" className="tlacidlo tlacidlo--hlavne tlacidlo--velke">
-          Pripraviť dopyt
-          <span className="tlacidlo__ikona" aria-hidden="true">
-            <ArrowRight size={18} weight="bold" />
-          </span>
-        </button>
-      </form>
-
-      {pripraveny && (
-        <section className="dopyt__vysledok" aria-labelledby={`${idPrefix}-vysledok`}>
-          <h3 id={`${idPrefix}-vysledok`}>Dopyt je pripravený. Odošlite ho zo svojho e-mailu.</h3>
-          <p className="tlmeny male">Text si môžete pred odoslaním upraviť. Zo stránky sa nič neodosiela.</p>
-          <p>
-            <strong>Predmet:</strong> {pripraveny.predmet}
-          </p>
-          <label htmlFor={`${idPrefix}-text`} className="visually-hidden">
-            Text dopytu
-          </label>
-          <textarea id={`${idPrefix}-text`} name="text" ref={textarea} rows={14} value={text} onChange={(e) => setText(e.target.value)} />
-          <div className="suhrn__akcie">
-            <button type="button" className="tlacidlo tlacidlo--hlavne" onClick={skopiruj}>
-              <Copy size={18} weight="bold" aria-hidden="true" />
-              Skopírovať dopyt
-            </button>
-            {znacka.kontaktEmail && (
-              <a className="tlacidlo tlacidlo--druhotne" href={mailtoOdkaz(znacka.kontaktEmail, pripraveny.predmet, text)}>
-                <PaperPlaneTilt size={18} weight="bold" aria-hidden="true" />
-                Otvoriť e-mail s dopytom
-              </a>
-            )}
+    <Sadzba>
+      <div className="dopyt">
+        <form className="formular" onSubmit={priprav} noValidate>
+          {pole('situacia', 'Kde sa u vás nový človek najčastejšie pomýli', {
+            povinne: true,
+            viacriadkove: true,
+            placeholder: 'napr. potvrdí termín bez kontroly rezervácií',
+            maxDlzka: MAX_DLZKA_SITUACIE,
+          })}
+          {pole('firma', 'Firma', { autoComplete: 'organization' })}
+          {pole('telefon', 'Telefón, ak chcete radšej hovoriť', { typ: 'tel', inputMode: 'tel', autoComplete: 'tel' })}
+          <div className="pole">
+            <label htmlFor={`${idPrefix}-balicek`}>Čo vás zaujíma</label>
+            <select id={`${idPrefix}-balicek`} name="balicek" value={vstup.balicek} onChange={(e) => nastav('balicek', e.target.value)}>
+              <option value="">Ešte neviem, poraďte</option>
+              {balicky.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {`${b.nazov}: ${formatEur(b.cena)}`}
+                </option>
+              ))}
+            </select>
           </div>
-          {skopirovane && (
-            <p role="status" className="dopyt__stav">
-              {skopirovane}
-            </p>
-          )}
-          {znacka.kontaktEmail ? (
+          <button type="submit" className="tlacidlo tlacidlo--hlavne">
+            Pripraviť e-mail
+          </button>
+        </form>
+
+        {pripraveny && (
+          <section className="dopyt__vysledok" aria-labelledby={`${idPrefix}-vysledok`}>
+            <h3 id={`${idPrefix}-vysledok`}>E-mail je pripravený. Odošlite ho zo svojej schránky.</h3>
+            <p className="tlmeny male">Text si môžete upraviť. Zo stránky sa nič neodosiela.</p>
             <p>
-              Adresa na zaslanie dopytu: <a href={`mailto:${znacka.kontaktEmail}`}>{znacka.kontaktEmail}</a>
+              <strong>Predmet:</strong> {pripraveny.predmet}
             </p>
-          ) : (
-            <p className="upozornenie">Kontaktná adresa na zaslanie dopytu sa doplní pred publikovaním stránky. Text si zatiaľ skopírujte.</p>
-          )}
-        </section>
-      )}
-    </div>
+            <label htmlFor={`${idPrefix}-text`} className="visually-hidden">
+              Text dopytu
+            </label>
+            <textarea id={`${idPrefix}-text`} name="text" ref={textarea} rows={11} value={text} onChange={(e) => setText(e.target.value)} />
+            <div className="dopyt__akcie">
+              {znacka.kontaktEmail && (
+                <a className="tlacidlo tlacidlo--hlavne" href={mailtoOdkaz(znacka.kontaktEmail, pripraveny.predmet, text)}>
+                  <PaperPlaneTilt size={18} weight="bold" aria-hidden="true" />
+                  Otvoriť e-mail s dopytom
+                </a>
+              )}
+              <button type="button" className="tlacidlo tlacidlo--druhotne" onClick={skopiruj}>
+                <Copy size={18} weight="bold" aria-hidden="true" />
+                Skopírovať text
+              </button>
+            </div>
+            {/* Živý región je v DOM od zobrazenia výsledku, mení sa len jeho text. */}
+            <p role="status" className="dopyt__stav">
+              {skopirovane && <span className="hlasenie">{skopirovane}</span>}
+            </p>
+          </section>
+        )}
+      </div>
+    </Sadzba>
   );
 }

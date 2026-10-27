@@ -1,9 +1,10 @@
 import type { Blok, Id, RozhodovaciUzol, Scenar, Trening, Uzol } from '../data/types';
+import { najdiTypickuChybu } from './pokus';
 
 /**
  * Automatická validácia scenárov: jedinečné identifikátory, existencia cieľových uzlov,
  * dosiahnuteľné konce, bez cyklov, konzistencia kontrolných bodov a existencia
- * bezchybnej cesty. Spúšťa sa v testoch aj cez `npm run validate`.
+ * bezchybnej cesty, typická chyba a reťaz následkov. Spúšťa sa v testoch aj cez `npm run validate`.
  */
 
 export interface Nalez {
@@ -67,7 +68,7 @@ export function validujScenar(scenar: Scenar): Nalez[] {
   /* 3. Vstupný uzol */
   const vstup = uzly.get(scenar.vstupnyUzol);
   if (!vstup) chyba(`Vstupný uzol „${scenar.vstupnyUzol}“ neexistuje.`);
-  else if (vstup.typ !== 'rozhodnutie') upozornenie('Vstupný uzol je záverečný – scenár nemá žiadne rozhodnutie.');
+  else if (vstup.typ !== 'rozhodnutie') upozornenie('Vstupný uzol je záverečný, scenár nemá žiadne rozhodnutie.');
 
   /* 4. Uzly, možnosti, väzby */
   for (const uzol of scenar.uzly) {
@@ -77,6 +78,10 @@ export function validujScenar(scenar: Scenar): Nalez[] {
     }
     if (uzol.typ === 'zaver') {
       if (uzol.vysvetlenie.length === 0) upozornenie('Záverečný uzol nemá vysvetlenie rozhodujúcich krokov.', kde);
+      if (uzol.retazNasledku) {
+        if (uzol.retazNasledku.length === 0) upozornenie('Reťaz následkov je prázdna.', kde);
+        if (uzol.retazNasledku.some((t) => !t.trim())) chyba('Reťaz následkov obsahuje prázdnu položku.', kde);
+      }
       continue;
     }
     for (const p of uzol.podklady ?? []) {
@@ -85,7 +90,7 @@ export function validujScenar(scenar: Scenar): Nalez[] {
     if (!uzol.uloha.trim()) chyba('Rozhodovací uzol nemá úlohu (otázku).', kde);
     if (uzol.moznosti.length === 0) chyba('Rozhodovací uzol nemá žiadnu možnosť.', kde);
     if (uzol.moznosti.length > 4) chyba(`Rozhodovací uzol má ${uzol.moznosti.length} možností; povolené sú najviac 4.`, kde);
-    if (uzol.moznosti.length === 1) upozornenie('Rozhodovací uzol má len jednu možnosť – používateľ nič nerozhoduje.', kde);
+    if (uzol.moznosti.length === 1) upozornenie('Rozhodovací uzol má len jednu možnosť, používateľ nič nerozhoduje.', kde);
 
     for (const m of uzol.moznosti) {
       const kdeM = `${kde}, možnosť ${m.id}`;
@@ -118,6 +123,11 @@ export function validujScenar(scenar: Scenar): Nalez[] {
       }
       for (const d of duplikaty(vsetkyHodnoty.map(String))) chyba(`Hodnota ${d} je priradená viacerým možnostiam.`, kde);
     }
+  }
+
+  /* 4b. Typická chyba musí byť existujúca možnosť */
+  if (scenar.typickaChyba !== undefined && !rozhodovacie(scenar).some((u) => u.moznosti.some((m) => m.id === scenar.typickaChyba))) {
+    chyba(`Typická chyba odkazuje na neexistujúcu možnosť „${scenar.typickaChyba}“.`);
   }
 
   /* Ak chýbajú väzby, graf nemá zmysel ďalej prechádzať. */
@@ -179,6 +189,9 @@ export function validujScenar(scenar: Scenar): Nalez[] {
   }
   const konceSpravne = scenar.uzly.filter((u) => u.typ === 'zaver' && u.vysledok === 'spravne');
   if (konceSpravne.length === 0) chyba('Scenár nemá záver s výsledkom „spravne“.');
+  if (scenar.typickaChyba !== undefined && !najdiTypickuChybu(scenar)) {
+    chyba(`Z typickej chyby „${scenar.typickaChyba}“ nevedie žiadna cesta k záveru s výsledkom „chyba“.`);
+  }
 
   /* 8. Kontrolné body: každý musí mať aspoň jednu splňujúcu možnosť */
   const splnaju = new Map<Id, number>();
@@ -193,10 +206,10 @@ export function validujScenar(scenar: Scenar): Nalez[] {
   }
   for (const kb of scenar.kontrolneBody) {
     if (!splnaju.get(kb.id)) chyba('Kontrolný bod nemá žiadnu možnosť, ktorá by ho splnila.', `kontrolný bod ${kb.id}`);
-    if (!nesplnaju.get(kb.id)) upozornenie('Kontrolný bod nemá žiadnu možnosť, ktorá by ho nesplnila – nič sa ním nerozlišuje.', `kontrolný bod ${kb.id}`);
+    if (!nesplnaju.get(kb.id)) upozornenie('Kontrolný bod nemá žiadnu možnosť, ktorá by ho nesplnila, nič sa ním nerozlišuje.', `kontrolný bod ${kb.id}`);
   }
 
-  /* 9. Bezchybná cesta a náklady na správnom závere (prechod všetkých ciest – graf je DAG) */
+  /* 9. Bezchybná cesta a náklady na správnom závere (prechod všetkých ciest, graf je DAG) */
   let bezchybna = false;
   let spravnyZaverSNakladom: number | undefined;
   const prejdi = (id: Id, splnene: Set<Id>, niekedyNesplnene: Set<Id>, naklad: number) => {

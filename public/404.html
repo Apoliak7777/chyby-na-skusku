@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="sk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#13202f" />
+    <title>Stránka neexistuje | Chyby na skúšku</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script>
+      // GitHub Pages vráti túto stránku pri každej neznámej adrese. Krátke adresy (z e-mailu,
+      // z hlavy, z vytlačeného listu) presmeruje na správnu časť aplikácie s hash adresou.
+      // Zohľadní aj podpriečinok (napr. /chyby-na-skusku/demo) a zachová query string (?z=...).
+      // Cesta /demo/<id> (situácia, prehľad) ide na rovnakú hash adresu #/demo/<id>.
+      (function () {
+        var mapa = {
+          demo: '#/demo/slubeny-termin',
+          ukazka: '#/demo/slubeny-termin',
+          situacie: '#/demo',
+          cena: '#cennik',
+          cennik: '#cennik',
+          kontakt: '#dopyt',
+          dopyt: '#dopyt',
+          'ochrana-udajov': '#/ochrana-udajov',
+          podmienky: '#/podmienky'
+        };
+        var cesta = location.pathname.replace(/\/index\.html?$/i, '').replace(/\.html?$/i, '').replace(/\/+$/, '');
+        function dekoduj(text) {
+          try {
+            return decodeURIComponent(text);
+          } catch (e) {
+            return text; // neplatné kódovanie v adrese: ostane neznáma stránka
+          }
+        }
+        var ciel;
+        var situacia = /^(.*\/)demo\/([^/]+)$/i.exec(cesta);
+        if (situacia) {
+          var id = dekoduj(situacia[2]).toLowerCase();
+          if (!/^[a-z0-9-]+$/.test(id)) return;
+          ciel = situacia[1] + location.search + '#/demo/' + id;
+        } else {
+          var lomka = cesta.lastIndexOf('/');
+          var kluc = dekoduj(cesta.slice(lomka + 1)).toLowerCase();
+          if (!Object.prototype.hasOwnProperty.call(mapa, kluc)) return;
+          ciel = cesta.slice(0, lomka + 1) + location.search + mapa[kluc];
+        }
+        window.__ciel = ciel;
+        document.documentElement.className = 'presmeruvam';
+        location.replace(ciel);
+      })();
+    </script>
+    <style>
+      :root {
+        --pozadie: #f5f4ef;
+        --plocha: #ffffff;
+        --text: #13202f;
+        --text-tlmeny: #4a5462;
+        --ciara: #dcd9cf;
+        --ciara-silna: #c3bfb2;
+        --akcent: #0b6b57;
+        --akcent-tmavy: #08503f;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--pozadie);
+        color: var(--text);
+        font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        font-size: 17px;
+        line-height: 1.55;
+      }
+      .hlavicka {
+        border-bottom: 1px solid var(--ciara);
+        padding: 16px;
+      }
+      .hlavicka a {
+        color: var(--text);
+        font-weight: 650;
+        text-decoration: none;
+      }
+      main {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 48px 16px;
+      }
+      .ram {
+        background: var(--plocha);
+        border: 1px solid var(--ciara);
+        border-radius: 12px;
+        padding: 28px 24px;
+      }
+      .kod {
+        margin: 0 0 8px;
+        font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+        font-size: 14px;
+        color: var(--text-tlmeny);
+      }
+      h1 {
+        margin: 0 0 12px;
+        font-size: 28px;
+        font-weight: 650;
+        line-height: 1.15;
+      }
+      p {
+        margin: 0 0 20px;
+      }
+      .akcie {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .tlacidlo {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 11px 20px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        font-weight: 600;
+        text-decoration: none;
+        line-height: 1.25;
+      }
+      .tlacidlo--hlavne {
+        background: var(--akcent);
+        color: #fff;
+      }
+      .tlacidlo--hlavne:hover {
+        background: var(--akcent-tmavy);
+      }
+      .tlacidlo--druhotne {
+        background: var(--plocha);
+        border-color: var(--ciara-silna);
+        color: var(--text);
+      }
+      .tlacidlo--druhotne:hover {
+        border-color: var(--text);
+      }
+      a:focus-visible {
+        outline: 2px solid var(--akcent);
+        outline-offset: 2px;
+      }
+      .presmerovanie {
+        display: none;
+      }
+      .presmeruvam .presmerovanie {
+        display: block;
+      }
+      .presmeruvam .neexistuje {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hlavicka">
+      <a href="/">Chyby na skúšku</a>
+    </header>
+    <main>
+      <div class="ram presmerovanie">
+        <p>Otváram stránku. Ak sa nič nedeje, <a id="ciel" href="/">pokračujte sem</a>.</p>
+      </div>
+      <div class="ram neexistuje">
+        <p class="kod">404</p>
+        <h1>Táto stránka neexistuje</h1>
+        <p>V adrese je možno preklep, alebo už neplatí. Ukážku, cenu aj kontakt nájdete na úvodnej stránke.</p>
+        <div class="akcie">
+          <a class="tlacidlo tlacidlo--hlavne" href="/">Prejsť na úvodnú stránku</a>
+          <a class="tlacidlo tlacidlo--druhotne" href="/#/demo/slubeny-termin">Vyskúšať ukážku</a>
+        </div>
+      </div>
+    </main>
+    <script>
+      if (window.__ciel) document.getElementById('ciel').setAttribute('href', window.__ciel);
+    </script>
+  </body>
+</html>

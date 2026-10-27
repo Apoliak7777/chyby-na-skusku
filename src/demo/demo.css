@@ -1,0 +1,1784 @@
+/* ==========================================================================
+   Prehrávač tréningu: odznaky, stavy, uzly, podklady, bloky, súhrn, prehľad a tlač.
+   Používa tokeny z ../styles.css (:root), vlastné farby ani polomery nezavádza.
+   Pracovný vzhľad dokladu: tenké linky, polomery --r-pole až --r-ram, štítky 4 px,
+   takmer bez tieňov. Čísla, kódy, sumy a štítky dokladov písmom --pismo-mono.
+   ========================================================================== */
+
+/* ---------- Štítky a stavy ---------- */
+
+.postup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  font-family: var(--pismo-mono);
+  font-size: 0.8rem;
+  color: var(--text-tlmeny);
+  margin: 0 0 6px;
+}
+
+.odznak {
+  display: inline-block;
+  padding: 1px 6px;
+  border: 1px solid var(--ciara-silna);
+  border-radius: 4px;
+  font-family: var(--pismo-mono);
+  font-size: 0.74rem;
+  line-height: 1.5;
+  color: var(--text-tlmeny);
+  background: var(--plocha);
+}
+
+.stav {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 1px 7px;
+  border: 1px solid;
+  border-radius: 4px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.stav svg {
+  flex: 0 0 auto;
+}
+
+.stav--spravne {
+  color: var(--ok);
+  background: var(--ok-svetle);
+  border-color: rgba(27, 111, 58, 0.35);
+}
+
+.stav--opravene {
+  color: var(--varovanie);
+  background: var(--varovanie-svetle);
+  border-color: rgba(138, 82, 0, 0.35);
+}
+
+.stav--nevyriesene {
+  color: var(--chyba);
+  background: var(--chyba-svetle);
+  border-color: rgba(180, 35, 24, 0.35);
+}
+
+.stav--otvorene {
+  color: var(--text-tlmeny);
+  background: var(--info-svetle);
+  border-color: var(--ciara-silna);
+}
+
+/* ---------- Prehrávač ---------- */
+
+/* Rovnaká šírka obsahu ako .obal v hlavičke a pätičke (styles.css). */
+.prehravac {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding-inline: clamp(16px, 4vw, 40px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'uvod'
+    'bok'
+    'telo';
+  gap: 16px;
+}
+
+.prehravac__uvod {
+  grid-area: uvod;
+  min-width: 0;
+  /* Po rozhodnutí sa stránka posúva na titul situácie: H1 aj nadpis kroku sú celé pod lepkavou hlavičkou. */
+  scroll-margin-top: calc(var(--vyska-hlavicky) + 12px);
+}
+
+.prehravac__telo {
+  grid-area: telo;
+  min-width: 0;
+}
+
+.prehravac__titul {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 12px;
+  margin-bottom: 8px;
+}
+
+.prehravac__nadpis {
+  font-size: clamp(1.7rem, 1.3rem + 1.6vw, 2.5rem);
+  margin: 0;
+}
+
+.prehravac__bok {
+  grid-area: bok;
+  display: none;
+  min-width: 0;
+}
+
+.prehravac__bok--otvoreny {
+  display: block;
+}
+
+.prehravac__bok-nadpis {
+  font-size: 1.05rem;
+  margin: 0 0 2px;
+}
+
+.prehravac__spat {
+  margin-top: 22px;
+}
+
+.uzol,
+.suhrn,
+.prehlad__scenar {
+  scroll-margin-top: calc(var(--vyska-hlavicky) + 12px);
+}
+
+.zadanie {
+  border-left: 2px solid var(--ciara-silna);
+  padding: 1px 0 1px 12px;
+  margin: 0 0 12px;
+  color: var(--text-tlmeny);
+}
+
+.zadanie p {
+  margin: 0 0 0.4em;
+}
+
+.predchadzajuci {
+  font-size: 0.9rem;
+  margin: 6px 0 2px;
+}
+
+.uzol {
+  background: var(--plocha);
+  border: 1px solid var(--ciara);
+  border-radius: var(--r-karta);
+  padding: 22px 24px;
+}
+
+.uzol--spatna-vazba {
+  border-left: 3px solid var(--chyba);
+}
+
+.uzol__stitok {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 1px 7px;
+  margin: 0 0 10px;
+  border: 1px solid rgba(180, 35, 24, 0.45);
+  border-radius: 4px;
+  background: var(--chyba-svetle);
+  color: var(--chyba);
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.uzol__cislo {
+  font-family: var(--pismo-mono);
+  font-size: 0.78rem;
+  color: var(--text-tlmeny);
+  margin: 0 0 2px;
+}
+
+.uzol__nadpis {
+  font-size: clamp(1.3rem, 1.15rem + 0.6vw, 1.6rem);
+  margin-top: 0;
+}
+
+.uzol__nadpis:focus,
+.verdikt__nadpis:focus {
+  outline: none;
+}
+
+.uzol__pribeh {
+  margin-bottom: 4px;
+}
+
+.uloha {
+  font-weight: 650;
+  font-size: 1.1rem;
+  margin: 16px 0 10px;
+  letter-spacing: -0.01em;
+}
+
+.moznosti {
+  display: grid;
+  gap: 8px;
+}
+
+.moznost {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  width: 100%;
+  min-height: 48px;
+  text-align: left;
+  padding: 11px 14px;
+  border: 1px solid var(--ciara-silna);
+  border-radius: var(--r-pole);
+  background: var(--plocha);
+  cursor: pointer;
+  font-weight: 500;
+  line-height: 1.45;
+  transition: border-color var(--trvanie) var(--krivka), background-color var(--trvanie) var(--krivka);
+}
+
+/* Prechod myšou je neutrálny: zelená v tréningu znamená „správne“ a nesmie radiť. */
+.moznost:hover {
+  border-color: var(--text);
+  background: var(--pozadie);
+}
+
+.moznost:active {
+  background: var(--pozadie-jemne);
+}
+
+.moznost__pismeno {
+  flex: 0 0 26px;
+  height: 26px;
+  border: 1px solid var(--text);
+  border-radius: 4px;
+  display: grid;
+  place-items: center;
+  font-family: var(--pismo-mono);
+  font-size: 0.82rem;
+  transition: background-color var(--trvanie) var(--krivka), color var(--trvanie) var(--krivka), border-color var(--trvanie) var(--krivka);
+}
+
+.moznost:hover .moznost__pismeno {
+  background: var(--plocha);
+  border-color: var(--text);
+}
+
+.moznost__text {
+  padding-top: 1px;
+  min-width: 0;
+}
+
+/* Číselný vstup */
+
+.vstup__popis {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.vstup__riadok {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.vstup__riadok input {
+  width: 110px;
+  min-height: 44px;
+  padding: 9px 11px;
+  border: 1px solid var(--ciara-silna);
+  border-radius: var(--r-pole);
+  background: var(--plocha);
+  font-family: var(--pismo-mono);
+  font-size: 1.05rem;
+}
+
+.vstup__jednotka {
+  font-family: var(--pismo-mono);
+}
+
+.vstup__prepocet {
+  margin: 10px 0 0;
+  min-height: 1.5em;
+  font-family: var(--pismo-mono);
+  font-size: 0.92rem;
+  color: var(--akcent-tmavy);
+}
+
+/* Doterajšie rozhodnutia */
+
+.doterajsie {
+  margin-top: 24px;
+}
+
+.doterajsie h3 {
+  margin-bottom: 2px;
+}
+
+.cesta {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px;
+  border-top: 1px solid var(--ciara);
+}
+
+.cesta__polozka {
+  padding: 9px 0 10px;
+  border-bottom: 1px solid var(--ciara);
+}
+
+.cesta__uzol {
+  font-size: 0.82rem;
+  color: var(--text-tlmeny);
+}
+
+.cesta__cislo {
+  font-family: var(--pismo-mono);
+}
+
+.cesta__volba {
+  font-weight: 600;
+}
+
+.cesta__nasledok {
+  color: var(--text-tlmeny);
+  font-size: 0.93rem;
+}
+
+.cesta__naklad {
+  color: var(--chyba);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.cesta .tlacidlo {
+  margin-top: 8px;
+}
+
+/* ---------- Podklady ---------- */
+
+.podklady__prepinac {
+  flex: 0 0 auto;
+}
+
+/* Záložky v mriežke dvoch rovnako širokých stĺpcov, nie nepravidelné riadky. */
+.podklady__zalozky {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.podklady__zalozka {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 36px;
+  text-align: left;
+  line-height: 1.3;
+  padding: 5px 10px;
+  border: 1px solid var(--ciara-silna);
+  border-radius: var(--r-pole);
+  background: transparent;
+  color: var(--text-tlmeny);
+  cursor: pointer;
+  font-size: 0.86rem;
+  font-weight: 500;
+  transition: border-color var(--trvanie) var(--krivka), color var(--trvanie) var(--krivka);
+}
+
+.podklady__zalozka:hover {
+  border-color: var(--text);
+  color: var(--text);
+}
+
+.podklady__zalozka[aria-selected='true'] {
+  background: var(--plocha);
+  border-color: var(--text);
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: inset 0 -2px 0 var(--akcent);
+}
+
+.podklady__znacka {
+  display: inline-flex;
+  color: var(--akcent);
+}
+
+.podklady__panel {
+  background: var(--plocha);
+  border: 1px solid var(--ciara);
+  border-radius: var(--r-karta);
+  padding: 14px 14px 4px;
+}
+
+.podklady__poznamka {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--akcent-tmavy);
+  margin-bottom: 10px;
+}
+
+/* Podklad je vložený priamo v kroku: len krátka poznámka, žiadna prázdna karta. */
+.podklady__panel--vlozeny {
+  background: none;
+  border: 0;
+  padding: 2px 2px 0;
+}
+
+.podklady__panel--vlozeny .podklady__poznamka {
+  font-weight: 500;
+  color: var(--text-tlmeny);
+}
+
+/* ---------- Bloky obsahu ---------- */
+
+.email {
+  border: 1px solid var(--ciara);
+  border-radius: var(--r-pole);
+  background: var(--plocha);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+/* Hlavička ako mriežka popis | hodnota: dlhá hodnota sa zalomí pod seba, nie pod popis.
+   Stĺpec popisov je široký ako najdlhší popis, riadky sú len zoskupenie (display: contents). */
+.email__hlavicka {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  column-gap: 8px;
+  row-gap: 1px;
+  align-items: baseline;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--ciara);
+  background: var(--pozadie);
+  font-size: 0.9rem;
+}
+
+.email__riadok {
+  display: contents;
+}
+
+.email__popis {
+  font-family: var(--pismo-mono);
+  font-size: 0.76rem;
+  color: var(--text-tlmeny);
+}
+
+.email__telo {
+  padding: 10px 12px 2px;
+}
+
+.email__telo p {
+  margin: 0 0 0.6em;
+}
+
+.tabulka-obal {
+  container-type: inline-size;
+  overflow-x: auto;
+  margin-bottom: 12px;
+}
+
+.tabulka {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9rem;
+  background: var(--plocha);
+}
+
+.tabulka caption {
+  text-align: left;
+  font-family: var(--pismo-mono);
+  font-size: 0.78rem;
+  color: var(--text-tlmeny);
+  padding: 0 0 6px;
+}
+
+.tabulka th,
+.tabulka td {
+  border: 1px solid var(--ciara);
+  padding: 6px 9px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.tabulka thead th {
+  background: var(--pozadie);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.tabulka tbody th {
+  font-weight: 600;
+}
+
+.tabulka .udaj,
+.zaznam .udaj {
+  font-family: var(--pismo-mono);
+  font-size: 0.88em;
+}
+
+.tabulka__poznamka {
+  font-size: 0.85rem;
+  color: var(--text-tlmeny);
+  margin-top: 6px;
+}
+
+/* V úzkom mieste (bočný panel, mobil) sa tabuľka zloží do kariet: riadok = karta, bunka = „stĺpec: hodnota“. */
+@container (max-width: 480px) {
+  .tabulka,
+  .tabulka tbody,
+  .tabulka tr,
+  .tabulka th,
+  .tabulka td,
+  .tabulka caption {
+    display: block;
+  }
+
+  .tabulka {
+    background: transparent;
+  }
+
+  .tabulka thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .tabulka tr {
+    border: 1px solid var(--ciara);
+    border-radius: var(--r-pole);
+    background: var(--plocha);
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+
+  .tabulka th,
+  .tabulka td {
+    border: 0;
+  }
+
+  .tabulka tbody th {
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--ciara);
+    background: var(--pozadie);
+  }
+
+  .tabulka td {
+    display: grid;
+    grid-template-columns: minmax(0, 42%) minmax(0, 1fr);
+    gap: 8px;
+    padding: 5px 10px;
+  }
+
+  .tabulka td + td {
+    border-top: 1px solid var(--ciara);
+  }
+
+  .tabulka td::before {
+    content: attr(data-stlpec);
+    font-family: var(--pismo);
+    font-size: 0.82rem;
+    color: var(--text-tlmeny);
+  }
+}
+
+.poznamka {
+  border-left: 2px solid var(--ciara-silna);
+  background: var(--pozadie);
+  padding: 8px 12px 1px;
+  border-radius: 0 var(--r-pole) var(--r-pole) 0;
+  margin-bottom: 12px;
+  font-size: 0.93rem;
+}
+
+.poznamka__nadpis,
+.zoznam__nadpis {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.zaznam {
+  border: 1px solid var(--ciara);
+  border-radius: var(--r-pole);
+  background: var(--plocha);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.zaznam__nadpis {
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--ciara);
+  background: var(--pozadie);
+  font-family: var(--pismo-mono);
+  font-size: 0.78rem;
+  color: var(--text-tlmeny);
+}
+
+.zaznam dl {
+  margin: 0;
+}
+
+.zaznam__riadok {
+  display: grid;
+  grid-template-columns: minmax(110px, 40%) minmax(0, 1fr);
+  gap: 8px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--ciara);
+  font-size: 0.93rem;
+}
+
+.zaznam__riadok:last-child {
+  border-bottom: 0;
+}
+
+.zaznam__riadok dt {
+  color: var(--text-tlmeny);
+}
+
+.zaznam__riadok dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.zaznam__riadok--zvyraznene {
+  background: var(--pozadie-jemne);
+}
+
+.zaznam__riadok--zvyraznene dd {
+  font-weight: 600;
+}
+
+.zaznam__riadok--zvyraznene dd.udaj {
+  font-weight: 500;
+}
+
+.zoznam ol {
+  padding-left: 1.3em;
+  margin: 0 0 12px;
+}
+
+.zoznam li {
+  margin-bottom: 0.35em;
+}
+
+.podklad-vlozeny {
+  margin-bottom: 12px;
+}
+
+.podklad-vlozeny__nadpis {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--pismo-mono);
+  font-size: 0.78rem;
+  color: var(--text-tlmeny);
+  margin-bottom: 5px;
+}
+
+/* ---------- Súhrn ---------- */
+
+.verdikt {
+  border: 1px solid var(--ciara);
+  border-top: 3px solid var(--ciara-silna);
+  border-radius: var(--r-karta);
+  background: var(--plocha);
+  padding: 16px 20px 14px;
+  margin-bottom: 16px;
+}
+
+.verdikt__hlava {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.verdikt__znak {
+  display: inline-flex;
+  flex: 0 0 auto;
+  color: var(--text-tlmeny);
+}
+
+.verdikt__nadpis {
+  margin: 0;
+  font-size: clamp(1.45rem, 1.2rem + 1vw, 1.95rem);
+}
+
+.verdikt__podnadpis {
+  font-weight: 600;
+  margin: 6px 0 4px;
+}
+
+.verdikt__veta {
+  margin: 0 0 4px;
+  max-width: 64ch;
+}
+
+.verdikt__naklad {
+  margin: 6px 0 0;
+  font-weight: 600;
+  color: var(--chyba);
+}
+
+.verdikt--zvladnute,
+.verdikt--zvladnute-po-oprave {
+  border-top-color: var(--ok);
+  background: var(--ok-svetle);
+}
+
+.verdikt--zvladnute .verdikt__znak,
+.verdikt--zvladnute-po-oprave .verdikt__znak {
+  color: var(--ok);
+}
+
+.verdikt--s-vyhradami,
+.verdikt--komplikacia {
+  border-top-color: var(--varovanie);
+  background: var(--varovanie-svetle);
+}
+
+.verdikt--s-vyhradami .verdikt__znak,
+.verdikt--komplikacia .verdikt__znak {
+  color: var(--varovanie);
+}
+
+.verdikt--chyba {
+  border-top-color: var(--chyba);
+  background: var(--chyba-svetle);
+}
+
+.verdikt--chyba .verdikt__znak {
+  color: var(--chyba);
+}
+
+/* Blok pre majiteľa: akcentový rám, jedna hlavná akcia. */
+.majitel {
+  border: 1px solid var(--akcent);
+  border-radius: var(--r-ram);
+  background: var(--plocha);
+  padding: 18px 22px;
+  margin: 0 0 18px;
+  box-shadow: inset 4px 0 0 var(--akcent);
+}
+
+.majitel--hlavny {
+  border-width: 2px;
+  padding: 22px 24px;
+}
+
+.majitel__nadpis {
+  font-size: 1.22rem;
+  margin: 0 0 6px;
+}
+
+.majitel--hlavny .majitel__nadpis,
+h2.majitel__nadpis {
+  font-size: clamp(1.3rem, 1.15rem + 0.7vw, 1.6rem);
+}
+
+.majitel__text {
+  max-width: 62ch;
+  margin-bottom: 14px;
+}
+
+.majitel__cena {
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.majitel__akcie {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.majitel__veduci {
+  font-size: 0.93rem;
+  margin: 0 0 4px;
+}
+
+.majitel__poznamka {
+  font-size: 0.82rem;
+  color: var(--text-tlmeny);
+  margin: 0;
+}
+
+/* Typická chyba nováčika a reťaz jej následkov. */
+.typicka {
+  border: 1px solid var(--ciara);
+  border-left: 3px solid var(--chyba);
+  border-radius: var(--r-karta);
+  background: var(--plocha);
+  padding: 16px 20px 12px;
+  margin: 0 0 20px;
+}
+
+.typicka__nadpis {
+  font-size: 1.05rem;
+  margin: 0 0 8px;
+}
+
+.typicka__volba {
+  margin: 0 0 10px;
+}
+
+.typicka__stitok {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 0 6px;
+  border: 1px solid rgba(180, 35, 24, 0.45);
+  border-radius: 4px;
+  font-family: var(--pismo-mono);
+  font-size: 0.74rem;
+  line-height: 1.6;
+  color: var(--chyba);
+  vertical-align: 1px;
+}
+
+.typicka__poznamka {
+  font-size: 0.85rem;
+  color: var(--text-tlmeny);
+  margin: 0;
+}
+
+.retaz {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  row-gap: 6px;
+}
+
+.retaz__krok {
+  display: inline-flex;
+  align-items: center;
+}
+
+.retaz__krok + .retaz__krok::before {
+  content: '→' / '';
+  margin: 0 8px;
+  font-family: var(--pismo-mono);
+  color: var(--chyba);
+}
+
+.retaz__text {
+  padding: 2px 8px;
+  border: 1px solid var(--ciara);
+  border-radius: 4px;
+  background: var(--pozadie);
+  font-size: 0.92rem;
+}
+
+.vysvetlenie {
+  padding-left: 1.2em;
+  margin-bottom: 4px;
+}
+
+.vysvetlenie li {
+  margin-bottom: 0.45em;
+}
+
+.suhrn__akcie {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 20px 0 8px;
+}
+
+.suhrn__pribeh {
+  margin-bottom: 8px;
+}
+
+/* Zbalené podrobnosti (pri tlači sa rozbalia). */
+.podrobnosti {
+  border-top: 1px solid var(--ciara);
+  margin-top: 18px;
+}
+
+.podrobnosti__nadpis {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px 0;
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+}
+
+.podrobnosti__nadpis::-webkit-details-marker {
+  display: none;
+}
+
+.podrobnosti__nadpis::before {
+  content: '+' / '';
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  border: 1px solid var(--ciara-silna);
+  border-radius: 4px;
+  font-family: var(--pismo-mono);
+  font-weight: 400;
+}
+
+.podrobnosti[open] > .podrobnosti__nadpis::before {
+  content: '-' / '';
+}
+
+.podrobnosti__obsah {
+  padding: 2px 0 8px;
+}
+
+.body-tabulka {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.94rem;
+  margin-bottom: 16px;
+}
+
+.body-tabulka th,
+.body-tabulka td {
+  border-bottom: 1px solid var(--ciara);
+  padding: 9px 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.body-tabulka thead th {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-tlmeny);
+  border-bottom-color: var(--ciara-silna);
+}
+
+.body-tabulka tbody th {
+  font-weight: 600;
+}
+
+/* V prehľade „Čo uvidí vedúci“ má stĺpec Výsledok pevnú šírku, štítky v situáciách ladia pod sebou. */
+.body-tabulka:not(.body-tabulka--vysvetlenie) {
+  table-layout: fixed;
+}
+
+.body-tabulka:not(.body-tabulka--vysvetlenie) .body-tabulka__vysledok {
+  width: 15rem;
+}
+
+.body-tabulka__zdroj {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.82rem;
+  color: var(--text-tlmeny);
+}
+
+/* ---------- Čo uvidí vedúci ---------- */
+
+.zaver-prehladu {
+  border: 1px solid var(--ciara);
+  border-top: 3px solid var(--text);
+  border-radius: var(--r-karta);
+  background: var(--plocha);
+  padding: 16px 20px 10px;
+  margin: 16px 0 18px;
+}
+
+.zaver-prehladu__nadpis {
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+}
+
+.zaver-prehladu h3 {
+  font-size: 1rem;
+  margin: 12px 0 6px;
+}
+
+.zaver-prehladu__cisla {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 32px;
+  margin: 0 0 6px;
+}
+
+.zaver-prehladu__cisla dt {
+  font-size: 0.82rem;
+  color: var(--text-tlmeny);
+}
+
+.zaver-prehladu__cisla dd {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.zaver-prehladu__body {
+  padding-left: 1.2em;
+  margin: 0 0 8px;
+}
+
+.zaver-prehladu__body li {
+  margin-bottom: 0.3em;
+}
+
+.zaver-prehladu__situacia {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-tlmeny);
+}
+
+.prehlad__ako {
+  font-size: 0.93rem;
+  max-width: 64ch;
+  margin: 0 0 4px;
+}
+
+.prehlad__nastroje {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+  margin: 0 0 22px;
+}
+
+.prehlad__meno {
+  display: grid;
+  gap: 4px;
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.prehlad__meno label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.prehlad__meno input {
+  min-height: 44px;
+  padding: 9px 11px;
+  border: 1px solid var(--ciara-silna);
+  border-radius: var(--r-pole);
+  background: var(--plocha);
+  width: 100%;
+}
+
+.prehlad__scenar {
+  background: var(--plocha);
+  border: 1px solid var(--ciara);
+  border-radius: var(--r-karta);
+  padding: 18px 20px 6px;
+  margin-bottom: 14px;
+}
+
+.prehlad__scenar h2 {
+  font-size: 1.35rem;
+  margin-bottom: 4px;
+}
+
+.prehlad__vysledok--chyba strong {
+  color: var(--chyba);
+}
+
+.prehlad__scenar .podrobnosti {
+  margin-top: 0;
+}
+
+.len-tlac {
+  display: none;
+}
+
+/* Písmo pre čísla je načítané len v reze 500; tučnejší rez by prehliadač len napodobnil. */
+.verdikt .mono,
+.cesta .mono,
+.prehlad .mono,
+.majitel .mono,
+.retaz .mono {
+  font-weight: 500;
+}
+
+/* ---------- Prehľad situácií ---------- */
+
+.domov__u-vas {
+  color: var(--text);
+}
+
+.situacie {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 22px;
+  display: grid;
+  gap: 12px;
+}
+
+.karta {
+  background: var(--plocha);
+  border: 1px solid var(--ciara);
+  border-radius: var(--r-karta);
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.karta--prva {
+  border-color: var(--ciara-silna);
+  box-shadow: inset 3px 0 0 var(--akcent);
+}
+
+.karta__hlava {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin: 0 0 2px;
+}
+
+.karta__hlava .postup {
+  margin: 0;
+}
+
+.karta__cas {
+  margin-left: auto;
+  font-family: var(--pismo-mono);
+  font-size: 0.78rem;
+  color: var(--text-tlmeny);
+}
+
+.stitok-zacnite {
+  padding: 0 6px;
+  border: 1px solid var(--akcent);
+  border-radius: 4px;
+  background: var(--akcent-svetly);
+  color: var(--akcent-tmavy);
+  font-family: var(--pismo-mono);
+  font-size: 0.74rem;
+  line-height: 1.6;
+}
+
+.karta h2 {
+  margin: 2px 0 6px;
+  font-size: 1.3rem;
+}
+
+.karta__stav {
+  font-size: 0.92rem;
+  margin-bottom: 10px;
+}
+
+.karta .tlacidlo {
+  align-self: flex-start;
+}
+
+.domov__poznamka {
+  margin-top: 18px;
+  font-size: 0.82rem;
+  color: var(--text-tlmeny);
+}
+
+/* ---------- Väčšie obrazovky: prehrávač s bočným panelom ---------- */
+
+@media (min-width: 960px) {
+  .prehravac {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+    grid-template-areas:
+      'uvod bok'
+      'telo bok';
+    column-gap: 28px;
+    row-gap: 16px;
+    align-items: start;
+  }
+
+  .prehravac__bok {
+    display: block;
+    position: sticky;
+    top: calc(var(--vyska-hlavicky) + 16px);
+    max-height: calc(100vh - var(--vyska-hlavicky) - 32px);
+    overflow: auto;
+    padding-right: 4px;
+  }
+
+  .podklady__prepinac {
+    display: none;
+  }
+}
+
+/* ---------- Mobil: zadanie a prvé rozhodnutie čo najvyššie ---------- */
+
+@media (max-width: 599px) {
+  .prehravac {
+    gap: 10px;
+  }
+
+  .postup {
+    font-size: 0.74rem;
+  }
+
+  .zadanie {
+    font-size: 0.93rem;
+    margin-bottom: 8px;
+  }
+
+  .uzol {
+    padding: 14px 14px 16px;
+  }
+
+  .uzol__nadpis {
+    margin-bottom: 0.4em;
+  }
+
+  .email__komu {
+    display: none;
+  }
+
+  .email__hlavicka {
+    font-size: 0.86rem;
+    padding: 7px 10px;
+  }
+
+  .email__telo {
+    padding: 8px 10px 1px;
+    font-size: 0.95rem;
+  }
+
+  .email__telo p {
+    margin-bottom: 0.45em;
+  }
+
+  .uloha {
+    font-size: 1.04rem;
+    margin: 12px 0 8px;
+  }
+
+  .moznost {
+    padding: 10px 12px;
+  }
+
+  .verdikt,
+  .majitel,
+  .majitel--hlavny,
+  .typicka,
+  .zaver-prehladu,
+  .prehlad__scenar,
+  .karta {
+    padding: 14px 14px;
+  }
+
+  .majitel__akcie .tlacidlo {
+    width: 100%;
+  }
+
+  .retaz {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .retaz__krok {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .retaz__krok + .retaz__krok::before {
+    content: '↓' / '';
+    margin: 0 0 4px 10px;
+  }
+
+  .zaver-prehladu__cisla {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px 12px;
+  }
+
+  /* Kontrolné body ako karty: názov, pod ním výsledok a vysvetlenie. */
+  .body-tabulka,
+  .body-tabulka tbody,
+  .body-tabulka tr,
+  .body-tabulka th,
+  .body-tabulka td {
+    display: block;
+  }
+
+  .body-tabulka thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .body-tabulka tr {
+    border-top: 1px solid var(--ciara);
+    padding: 10px 0;
+  }
+
+  .body-tabulka tr:last-child {
+    border-bottom: 1px solid var(--ciara);
+  }
+
+  .body-tabulka th,
+  .body-tabulka td {
+    border: 0;
+    padding: 2px 0;
+  }
+
+  .body-tabulka td + td {
+    margin-top: 4px;
+    font-size: 0.92rem;
+  }
+}
+
+/* ---------- Pohyb ----------
+   Len transform a opacity (zvýrazňovač aj scaleX, štítok aj clip-path), len na obrazovke a len
+   bez prefers-reduced-motion: pri reduced motion a pri tlači sa žiadne pravidlo nižšie neuplatní
+   a všetko je hneď viditeľné. Vstupné animácie majú výplň backwards: pred štartom držia prvý
+   snímok, po konci platí bežný štýl (aj :active). Spúšťajú sa raz, keď prvok vznikne; triedy
+   --pohyb pridáva pohyb.ts až po rozhodnutí, prvé vykreslenie situácie je bez pohybu.
+   Prvok je klikateľný hneď, animácia logiku nezdržiava. Posuny: karta --pohyb-posun, menší
+   prvok asi 0,6 z neho; na mobile je --pohyb-posun kratší (nižšie). */
+
+@keyframes demo-vstup {
+  from {
+    opacity: 0;
+    transform: translateY(var(--posun, var(--pohyb-posun)));
+  }
+}
+
+/* Štítok spätnej väzby sa vysunie spod červenej linky karty. */
+@keyframes demo-vysun {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+    clip-path: inset(0 100% 0 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Pečiatka verdiktu: riadok so znakom a nadpisom dopadne zväčšený a mierne natočený,
+   s krátkym prekmitom (--krivka-peciatka), ako pečiatka na doklad. */
+@keyframes demo-peciatka {
+  from {
+    opacity: 0;
+    transform: scale(1.25) rotate(-3deg);
+  }
+}
+
+@keyframes demo-zjav {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Následok po chybe: podfarbenie prejde pod odsekom ako zvýrazňovač, chvíľu ostane a zmizne. */
+@keyframes demo-zvyraznenie {
+  0% {
+    opacity: 1;
+    transform: scaleX(0);
+    animation-timing-function: var(--krivka-von);
+  }
+
+  35% {
+    opacity: 1;
+    transform: none;
+  }
+
+  65% {
+    opacity: 1;
+    animation-timing-function: ease-in-out;
+  }
+
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+
+/* Krok reťaze následkov prichádza v smere šípky (desktop zľava, mobil zhora). */
+@keyframes demo-krok {
+  from {
+    opacity: 0;
+    transform: translate(var(--krok-x, -8px), var(--krok-y, 0px));
+  }
+}
+
+@media screen and (prefers-reduced-motion: no-preference) {
+  /* Nový krok: karta stojí, obsah príde zhora nadol, možnosti v sérii. */
+  .uzol--pohyb > .uzol__stitok {
+    animation: demo-vysun 0.35s var(--krivka-von) backwards;
+  }
+
+  .uzol--pohyb > .uzol__cislo,
+  .uzol--pohyb > .uzol__nadpis,
+  .uzol--pohyb > .uzol__pribeh,
+  .uzol--pohyb .uloha,
+  .uzol--pohyb .moznost,
+  .uzol--pohyb .vstup__popis,
+  .uzol--pohyb .vstup__riadok {
+    --posun: calc(var(--pohyb-posun) * 0.6);
+    animation: demo-vstup var(--pohyb-stredny) var(--krivka-von) backwards;
+  }
+
+  .uzol--pohyb > .uzol__pribeh {
+    --posun: var(--pohyb-posun);
+    animation-delay: var(--pohyb-odstup);
+  }
+
+  .uzol--pohyb .uloha,
+  .uzol--pohyb .vstup__popis {
+    animation-delay: calc(2 * var(--pohyb-odstup));
+  }
+
+  .uzol--pohyb .moznost,
+  .uzol--pohyb .vstup__riadok {
+    animation-delay: calc(3 * var(--pohyb-odstup));
+  }
+
+  .uzol--pohyb .moznost:nth-child(2) {
+    animation-delay: calc(4 * var(--pohyb-odstup));
+  }
+
+  .uzol--pohyb .moznost:nth-child(3) {
+    animation-delay: calc(5 * var(--pohyb-odstup));
+  }
+
+  .uzol--pohyb .moznost:nth-child(n + 4) {
+    animation-delay: calc(6 * var(--pohyb-odstup));
+  }
+
+  /* Po chybe sa prvý odsek príbehu (čo sa stalo) na chvíľu podfarbí. Pseudoprvok je mimo pohybu
+     vôbec nevznikne, odsek ostane bez podfarbenia. */
+  .uzol--pohyb.uzol--spatna-vazba > .uzol__pribeh > p:first-child {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .uzol--pohyb.uzol--spatna-vazba > .uzol__pribeh > p:first-child::before {
+    content: '';
+    position: absolute;
+    inset: -3px -8px;
+    z-index: -1;
+    border-radius: 4px;
+    background: var(--chyba-svetle);
+    opacity: 0;
+    transform-origin: left center;
+    animation: demo-zvyraznenie 1.5s linear calc(4 * var(--pohyb-odstup)) backwards;
+  }
+
+  /* Možnosť: pri stlačení sa jemne zatlačí. Prechod myšou ostáva neutrálny (nie zelený). */
+  .moznost {
+    transition: border-color var(--trvanie) var(--krivka), background-color var(--trvanie) var(--krivka),
+      transform var(--pohyb-kratky) var(--krivka-von);
+  }
+
+  .moznost:active {
+    transform: translateY(1px);
+    transition-duration: 0.06s;
+  }
+
+  .moznost__pismeno {
+    transition: background-color var(--trvanie) var(--krivka), color var(--trvanie) var(--krivka), border-color var(--trvanie) var(--krivka),
+      transform var(--pohyb-kratky) var(--krivka-von);
+  }
+
+  /* Podklady: prepnutá záložka a otvorené podrobnosti sa ukážu plynulo, bez zmeny výšky. */
+  .podklady--pohyb .podklady__panel {
+    --posun: 4px;
+    animation: demo-vstup var(--pohyb-kratky) var(--krivka-von) backwards;
+  }
+
+  .podrobnosti[open] > .podrobnosti__obsah {
+    --posun: -4px;
+    animation: demo-vstup var(--pohyb-kratky) var(--krivka-von) backwards;
+  }
+
+  /* Súhrn: karta verdiktu (len zjasnie, je to papier, na ktorý pečiatka dopadne), pečiatka,
+     veta následku a náklad, blok pre majiteľa, typická chyba, zvyšok. */
+  .suhrn--pohyb > * {
+    --posun: calc(var(--pohyb-posun) * 0.6);
+    animation: demo-vstup var(--pohyb-stredny) var(--krivka-von) backwards;
+    animation-delay: calc(9 * var(--pohyb-odstup));
+  }
+
+  /* Karta oreže zväčšenú pečiatku: riadok je na celú šírku a nesmie na mobile pretiecť okno. */
+  .suhrn--pohyb > .verdikt {
+    overflow: clip;
+    animation: demo-zjav var(--pohyb-kratky) var(--krivka-von) backwards;
+  }
+
+  .suhrn--pohyb .verdikt__hlava {
+    transform-origin: left center;
+    animation: demo-peciatka var(--pohyb-stredny) var(--krivka-peciatka) calc(1.5 * var(--pohyb-odstup)) backwards;
+  }
+
+  .suhrn--pohyb .verdikt__podnadpis,
+  .suhrn--pohyb .verdikt__veta,
+  .suhrn--pohyb .verdikt__naklad {
+    --posun: calc(var(--pohyb-posun) * 0.45);
+    animation: demo-vstup var(--pohyb-stredny) var(--krivka-von) backwards;
+    animation-delay: calc(4 * var(--pohyb-odstup));
+  }
+
+  .suhrn--pohyb .verdikt__veta {
+    animation-delay: calc(5 * var(--pohyb-odstup));
+  }
+
+  .suhrn--pohyb .verdikt__naklad {
+    animation-delay: calc(6 * var(--pohyb-odstup));
+  }
+
+  .suhrn--pohyb > .majitel {
+    --posun: var(--pohyb-posun);
+    animation-delay: calc(7 * var(--pohyb-odstup));
+  }
+
+  .suhrn--pohyb > .typicka {
+    animation-delay: calc(8 * var(--pohyb-odstup));
+  }
+
+  /* Reťaz následkov krok za krokom, až keď je v okne (trieda z useOdhalenie). Keď je v okne hneď,
+     začne po karte typickej chyby; --uplynulo je čas od vzniku súhrnu. */
+  .retaz.odhalit:not(.odhalene) .retaz__krok {
+    opacity: 0;
+  }
+
+  .retaz.odhalene .retaz__krok {
+    animation: demo-krok var(--pohyb-stredny) var(--krivka-von) backwards;
+    animation-delay: calc(max(0ms, 10 * var(--pohyb-odstup) - var(--uplynulo, 0ms)) + var(--krok, 0) * 2 * var(--pohyb-odstup));
+  }
+
+  .retaz__krok:nth-child(2) {
+    --krok: 1;
+  }
+
+  .retaz__krok:nth-child(3) {
+    --krok: 2;
+  }
+
+  .retaz__krok:nth-child(4) {
+    --krok: 3;
+  }
+
+  .retaz__krok:nth-child(n + 5) {
+    --krok: 4;
+  }
+
+  /* Čo uvidí vedúci: čísla záveru naskočia, body na prebratie prídu v sérii. Karta sama stojí. */
+  .zaver-prehladu__cisla > div,
+  .zaver-prehladu__body li {
+    --posun: calc(var(--pohyb-posun) * 0.6);
+    animation: demo-vstup var(--pohyb-stredny) var(--krivka-von) backwards;
+    animation-delay: var(--pohyb-odstup);
+  }
+
+  .zaver-prehladu__cisla > div:nth-child(2) {
+    animation-delay: calc(2 * var(--pohyb-odstup));
+  }
+
+  .zaver-prehladu__cisla > div:nth-child(3) {
+    animation-delay: calc(3 * var(--pohyb-odstup));
+  }
+
+  .zaver-prehladu__body li {
+    --posun: calc(var(--pohyb-posun) * 0.45);
+    animation-delay: calc(4 * var(--pohyb-odstup));
+  }
+
+  .zaver-prehladu__body li:nth-child(2) {
+    animation-delay: calc(5 * var(--pohyb-odstup));
+  }
+
+  .zaver-prehladu__body li:nth-child(3) {
+    animation-delay: calc(6 * var(--pohyb-odstup));
+  }
+
+  .zaver-prehladu__body li:nth-child(n + 4) {
+    animation-delay: calc(7 * var(--pohyb-odstup));
+  }
+}
+
+/* Písmeno možnosti sa pri ukázaní myšou posunie k textu (len zariadenia s myšou, nie dotyk). */
+@media screen and (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .moznost:hover .moznost__pismeno {
+    transform: translateX(2px);
+  }
+}
+
+/* Mobil a úzke okno: prepínač podkladov ich otvorí posunom zhora (výška sa neanimuje). */
+@media screen and (max-width: 959px) and (prefers-reduced-motion: no-preference) {
+  .prehravac__bok--otvoreny {
+    --posun: -6px;
+    animation: demo-vstup var(--pohyb-kratky) var(--krivka-von) backwards;
+  }
+}
+
+/* Mobil: kratšie posuny, reťaz ide zhora nadol ako šípky. */
+@media screen and (max-width: 599px) {
+  .prehravac,
+  .prehlad {
+    --pohyb-posun: 8px;
+  }
+
+  .retaz {
+    --krok-x: 0px;
+    --krok-y: -6px;
+  }
+}
+
+/* ---------- Tlač: súhrn a „Čo uvidí vedúci“ čitateľne na A4 ---------- */
+
+@page {
+  size: A4;
+  margin: 14mm 14mm 16mm;
+}
+
+@media print {
+  body {
+    background: #fff;
+    color: #000;
+    font-size: 10.5pt;
+  }
+
+  .hlavicka,
+  .paticka,
+  .bez-tlace,
+  .prehravac__bok,
+  .podklady__prepinac,
+  .preskocit {
+    display: none !important;
+  }
+
+  .len-tlac {
+    display: block;
+  }
+
+  .obsah--demo {
+    padding: 0;
+  }
+
+  .prehravac {
+    display: block;
+    padding: 0;
+  }
+
+  .uzol,
+  .verdikt,
+  .typicka,
+  .zaver-prehladu,
+  .prehlad__scenar,
+  .karta {
+    background: #fff;
+    border-color: #999;
+    box-shadow: none;
+  }
+
+  /* Nedeliť len menšie bloky. Celá situácia sa deliť smie, inak by každá začala na novej strane
+     a za kartou Záver by ostala prázdna polovica strany. */
+  .verdikt,
+  .typicka,
+  .karta,
+  .zaver-prehladu__cisla,
+  .zaver-prehladu__body li,
+  .cesta__polozka,
+  .body-tabulka {
+    break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3,
+  .postup,
+  .prehlad__scenar > p,
+  .podrobnosti__nadpis {
+    break-after: avoid;
+  }
+
+  .prehlad h1 {
+    font-size: 20pt;
+    margin-bottom: 4px;
+  }
+
+  .zaver-prehladu {
+    margin: 8px 0 10px;
+    padding: 10px 14px 4px;
+  }
+
+  .prehlad__scenar {
+    padding: 10px 14px 0;
+    margin-bottom: 8px;
+  }
+
+  .prehlad__scenar h2 {
+    font-size: 14pt;
+  }
+
+  .body-tabulka {
+    margin-bottom: 6px;
+  }
+
+  .body-tabulka th,
+  .body-tabulka td {
+    padding: 4px 6px;
+  }
+
+  .cesta__polozka {
+    padding: 5px 0 6px;
+  }
+
+  .verdikt {
+    border-top-width: 3px;
+  }
+
+  .stav,
+  .retaz__text {
+    background: none;
+    border-color: #999;
+  }
+
+  .podrobnosti {
+    border-top-color: #999;
+  }
+
+  .podrobnosti__nadpis {
+    min-height: 0;
+  }
+
+  .podrobnosti__nadpis::before {
+    display: none;
+  }
+
+  .body-tabulka tr {
+    break-inside: avoid;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+/* Záloha pre prehliadače, ktoré pri tlači neobslúžia udalosť beforeprint (samostatné pravidlo:
+   neznámy pseudoprvok nesmie zrušiť ostatné). */
+@media print {
+  .podrobnosti::details-content {
+    content-visibility: visible;
+  }
+}
+
+/* Kódy produktov a objednávok (D-1038, L-240B) a dátum stavu sa nelámu na spojovníku ani v medzere. */
+.bez-zlomu {
+  white-space: nowrap;
+}
+
+/* Sumy v bežnom texte: tučné číslice rovnakej šírky, nie strojopis (ten má širokú medzeru pred €). */
+.suma {
+  font-weight: 620;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

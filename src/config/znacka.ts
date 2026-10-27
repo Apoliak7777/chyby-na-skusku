@@ -8,8 +8,20 @@
 
 export const znacka = {
   nazov: 'Chyby na skúšku',
-  /** Meno poskytovateľa sa na webe zámerne neuvádza; ak sa vyplní, ukáže sa v pätičke. */
+  /**
+   * Celé meno poskytovateľa. Zatiaľ sa zámerne neuvádza; keď sa vyplní, ukáže sa
+   * sekcia „Kto to robí“, podpis pri kontakte a meno v pätičke aj v ochrane údajov.
+   */
   poskytovatel: '',
+  /** Telefón v tvare na zobrazenie, napr. '+421 900 000 000'. Prázdny = nikde sa neukáže. */
+  telefon: '',
+  /** IČO a sídlo poskytovateľa. Prázdne = nikde sa neukážu. */
+  ico: '',
+  sidlo: '',
+  /** Fotka poskytovateľa v public/, napr. 'img/foto.jpg'. Ukáže sa len spolu s menom. */
+  fotka: '',
+  /** Lehota odpovede, napr. 'jedného pracovného dňa'. Vyplniť, len ak naozaj platí. */
+  odpovedDo: '',
   /**
    * Kontaktný e-mail na dopyty. Kým je prázdny, formulár dopyt len pripraví
    * a ponúkne jeho skopírovanie; tlačidlo „Otvoriť e-mail s dopytom“ sa neukáže.
@@ -39,13 +51,14 @@ export interface Balicek {
 export const balicky: Balicek[] = [
   {
     id: 'pilot',
-    nazov: 'Platený pilot',
+    nazov: 'Pilot',
     cena: 690,
     rozsah: [
-      '3 situácie pre jednu pracovnú pozíciu',
-      'vstupný rozhovor o chybách a postupoch',
-      'jednoduché firemné označenie (názov, logo, farba)',
-      'jedno súhrnné kolo úprav',
+      '3 situácie z chýb, ktoré sa opakujú u vás',
+      'hodinový rozhovor s vedúcim (na rozhovor nemusíte nič písať)',
+      'váš názov, logo a farba',
+      'zdrojové súbory, spísané pravidlá a návod na úpravu textov',
+      'jedno kolo úprav',
     ],
     vhodne: 'Na overenie, či sa tréning vo firme naozaj používa pri zaškoľovaní.',
   },
@@ -55,7 +68,7 @@ export const balicky: Balicek[] = [
     cena: 1900,
     rozsah: [
       '10 situácií pre jednu pracovnú pozíciu',
-      'firemný vzhľad',
+      'váš názov, logo a farba',
       'dve súhrnné kolá úprav',
       'návod a odovzdanie zdrojov',
     ],
@@ -70,26 +83,18 @@ export const balicky: Balicek[] = [
   },
 ];
 
-/** Čo sa dohodne osobitne (nie je v cene balíčkov). */
-export const mimoCeny = [
-  'hosting tréningu v prostredí firmy alebo u nás',
-  'napojenie na firemné systémy (ERP, CRM, HR, LMS)',
-  'ďalšie jazyky',
-  'nové pracovné pozície',
-];
-
-export const dodanie = {
-  pilotPracovneDni: '7 až 10 pracovných dní od dodania úplných podkladov',
-  poznamka:
-    'Pri prvej reálnej zákazke sa termín potvrdí individuálne. Tréning nevzniká automaticky za pár minút. Každú situáciu s vami prejdeme a necháme si ju schváliť.',
-};
-
+/** Suma na web: 1 900 €. Medzery sú nezlomiteľné, suma sa nerozdelí na dva riadky. */
 export function formatEur(suma: number): string {
-  // 1 900 € – medzera ako oddeľovač tisícov, bez desatín pri celých číslach
+  // Bez desatín pri celých číslach; toLocaleString dáva medzi tisícami nezlomiteľnú alebo úzku medzeru.
   const cele = Number.isInteger(suma);
   const text = suma.toLocaleString('sk-SK', {
     minimumFractionDigits: cele ? 0 : 2,
     maximumFractionDigits: 2,
   });
-  return `${text.replace(/ /g, ' ')} €`;
+  return `${text.replace(/[\s\u202f]/g, '\u00a0')}\u00a0€`;
+}
+
+/** Suma do textu e-mailu: 1 900 € s obyčajnými medzerami (e-mailové programy, kopírovanie). */
+export function formatEurText(suma: number): string {
+  return formatEur(suma).replace(/\u00a0/g, ' ');
 }

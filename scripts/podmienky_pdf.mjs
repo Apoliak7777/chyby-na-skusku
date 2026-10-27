@@ -108,13 +108,13 @@ function naHtml(md) {
   return von.join('\n');
 }
 
-const pismo = path.resolve('node_modules/@fontsource-variable/plus-jakarta-sans/files');
+const pismo = path.resolve('node_modules/@fontsource-variable/ibm-plex-sans/files');
 const fontFace = ['latin', 'latin-ext']
-  .map((sada) => path.join(pismo, `plus-jakarta-sans-${sada}-wght-normal.woff2`))
+  .map((sada) => path.join(pismo, `ibm-plex-sans-${sada}-wght-normal.woff2`))
   .filter((f) => existsSync(f))
   .map(
     (f) =>
-      `@font-face{font-family:'Plus Jakarta Sans';font-style:normal;font-weight:200 800;font-display:block;src:url('${pathToFileURL(f).href}') format('woff2-variations');}`,
+      `@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:100 700;font-display:block;src:url('${pathToFileURL(f).href}') format('woff2-variations');}`,
   )
   .join('\n');
 
@@ -122,19 +122,19 @@ const html = `<!doctype html>
 <html lang="sk"><head><meta charset="utf-8"><title>Podmienky pilotu Chyby na skúšku</title>
 <style>
 ${fontFace}
-@page { size: A4; margin: 13mm 18mm 12mm; }
+@page { size: A4; margin: 11mm 18mm 11mm; }
 html, body { margin: 0; padding: 0; }
-body { font-family: 'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif; font-size: 10.4pt; line-height: 1.42;
-       color: #0f2a4a; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { font-family: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif; font-size: 10.4pt; line-height: 1.42;
+       color: #13202f; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 h1 { font-size: 19pt; line-height: 1.15; letter-spacing: -0.015em; margin: 0 0 1.6mm; font-weight: 700; }
 .uvod { color: #4a5f78; margin: 0 0 3mm; }
-h2 { font-size: 11.4pt; margin: 3.1mm 0 1mm; color: #0e7c66; font-weight: 700; }
+h2 { font-size: 11.4pt; margin: 3.1mm 0 1mm; color: #0b6b57; font-weight: 700; }
 p, ul, ol { margin: 0 0 1.2mm; }
 ul, ol { padding-left: 4.6mm; }
 li { margin: 0 0 0.6mm; padding-left: 0.6mm; }
-li::marker { color: #0e7c66; }
+li::marker { color: #0b6b57; }
 strong { font-weight: 700; }
-a { color: #0e7c66; text-decoration: none; }
+a { color: #0b6b57; text-decoration: none; }
 .pata { margin-top: 3mm; padding-top: 2.2mm; border-top: 1px solid #d5dde8; color: #4a5f78; }
 </style></head><body>
 ${naHtml(readFileSync(zdroj, 'utf8'))}
@@ -154,7 +154,7 @@ try {
   const vyska = await page.evaluate(() => document.body.getBoundingClientRect().height);
   const pdf = await page.pdf({ path: vystup, format: 'A4', preferCSSPageSize: true, printBackground: true });
   const stran = (pdf.toString('latin1').match(/\/Type\s*\/Page(?![s\w])/g) ?? []).length;
-  const potlacitelna = ((297 - 13 - 12) / 25.4) * 96; // px, podľa @page margin
+  const potlacitelna = ((297 - 11 - 11) / 25.4) * 96; // px, podľa @page margin
   console.log(`${path.relative(process.cwd(), vystup)}  (${(pdf.length / 1024).toFixed(0)} kB, ${stran} strana/strany, obsah ${Math.round(vyska)} px z ${Math.round(potlacitelna)} px)`);
   if (stran !== 1) {
     console.error('Podmienky sa nezmestili na jednu stranu. Skráťte text v docs/PODMIENKY_PILOTU.md.');

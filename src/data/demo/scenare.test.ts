@@ -4,7 +4,7 @@ import { trening } from './index';
 import { CENA_BALENIA, KUSOV_V_BALENI, NAKLAD_OPRAVY, POZADOVANE_KUSY, kusyAleboBalenia } from './scenar2_kusy_alebo_balenia';
 import { slubenyTermin } from './scenar1_slubeny_termin';
 import { zmenaAdresy } from './scenar3_zmena_adresy';
-import { novyPokus, vyberMoznost, vyhodnot, type Vyhodnotenie } from '../../engine/pokus';
+import { najdiTypickuChybu, novyPokus, odhadTrvania, vyberMoznost, vyhodnot, type Vyhodnotenie } from '../../engine/pokus';
 
 /** Prejde všetky cesty scenára (graf je DAG) a vráti vyhodnotenie každej z nich. */
 function vsetkyCesty(scenar: Scenar): Vyhodnotenie[] {
@@ -79,9 +79,77 @@ describe('demo tréning', () => {
       expect(s.podklady.some((p) => p.druh === 'email')).toBe(true);
     }
   });
+
+  it.each(scenare.map((s) => [s.nazov, s] as const))('%s: typická chyba vedie k chybnému záveru s reťazou následkov', (_n, scenar) => {
+    const t = najdiTypickuChybu(scenar);
+    expect(t, 'typickaChyba').toBeTruthy();
+    expect(t?.zaver.vysledok).toBe('chyba');
+    expect(t?.zaver.retazNasledku?.length).toBeGreaterThanOrEqual(2);
+    expect(t?.naklad).toBeGreaterThan(0);
+  });
+
+  it.each(scenare.map((s) => [s.nazov, s] as const))('%s: suma v reťazi následkov sedí s nákladom každej cesty k záveru', (_n, scenar) => {
+    const cesty = vsetkyCesty(scenar);
+    for (const u of scenar.uzly) {
+      if (u.typ !== 'zaver' || !u.retazNasledku) continue;
+      const sumy = u.retazNasledku.join(' ').match(/\d[\d ]*(?= €)/g)?.map((x) => Number(x.replace(/ /g, ''))) ?? [];
+      const naklady = new Set(cesty.filter((c) => c.zaver?.id === u.id).map((c) => c.naklad));
+      if (sumy.length === 0) {
+        expect([...naklady], `záver ${u.id} bez sumy v reťazi`).toEqual([0]);
+      } else {
+        expect([...naklady], `záver ${u.id}`).toEqual([sumy[0]]);
+      }
+    }
+  });
+
+  it('texty ukážky sú bez dekoratívnych pomlčiek a bez „(modelový zákazník)“', () => {
+    const text = JSON.stringify(trening);
+    expect(text).not.toMatch(/ [–—] /);
+    expect(text).not.toContain('modelový zákazník');
+  });
+
+  it.each(scenare.map((s) => [s.nazov, s] as const))('%s: možnosti neprezrádzajú odpoveď výpočtom ani zdôvodnením', (_n, scenar) => {
+    // Prvá voľba situácie 1 má rovnaký text ako náhľad na predajnom webe.
+    const vynimky = new Set(['s1-start-potvrdit']);
+    for (const u of scenar.uzly) {
+      if (u.typ !== 'rozhodnutie' || u.vstup) continue;
+      for (const m of u.moznosti) {
+        if (vynimky.has(m.id)) continue;
+        expect(m.text, m.id).not.toMatch(/[€=÷×]/);
+        expect(m.text.split(/[.?!](?:\s|$)/).filter((v) => v.trim()).length, `${m.id}: jedna veta`).toBe(1);
+      }
+    }
+  });
+
+  it.each(scenare.map((s) => [s.nazov, s] as const))('%s: správny záver vysvetľuje pravidlá, netvrdí kroky návštevníka', (_n, scenar) => {
+    // Do správneho záveru vedú aj cesty s opravenou chybou, preto „Čo rozhodlo“ nehovorí, čo návštevník urobil.
+    for (const u of scenar.uzly) {
+      if (u.typ !== 'zaver' || u.vysledok !== 'spravne') continue;
+      for (const v of u.vysvetlenie) expect(v, u.id).not.toMatch(/\bste\b/);
+    }
+  });
+
+  it('prvé rozhodnutie situácie 1 má texty ako náhľad na predajnom webe', () => {
+    const start = slubenyTermin.uzly.find((u) => u.id === slubenyTermin.vstupnyUzol);
+    const texty = start?.typ === 'rozhodnutie' ? Object.fromEntries(start.moznosti.map((m) => [m.id, m.text])) : {};
+    expect(texty['s1-start-potvrdit']).toBe('Potvrdiť piatok. Na sklade je 12 kusov.');
+    expect(texty['s1-start-overit']).toBe('Odpovedať až po kontrole rezervácií.');
+  });
+
+  it('stručný opis situácie neprezrádza riešenie', () => {
+    expect(slubenyTermin.strucnyProblem).not.toMatch(/voľn|rezerv/i);
+    expect(kusyAleboBalenia.strucnyProblem).not.toMatch(/balen/i);
+    expect(zmenaAdresy.strucnyProblem).not.toMatch(/štítok|nestačí/i);
+  });
+
+  it('prvá situácia má najkratšiu bezchybnú cestu so 4 rozhodnutiami a trvá asi 3 minúty', () => {
+    expect(odhadTrvania(slubenyTermin)).toEqual({ rozhodnutia: 4, minuty: 3 });
+    expect(odhadTrvania(kusyAleboBalenia).rozhodnutia).toBe(3);
+    expect(odhadTrvania(zmenaAdresy).rozhodnutia).toBe(4);
+  });
 });
 
-describe('scenár Kusy alebo balenia – výpočty', () => {
+describe('scenár Kusy alebo balenia: výpočty', () => {
   const najdi = (id: Id) => kusyAleboBalenia.uzly.find((u) => u.id === id)!;
   const textUzla = (id: Id) => JSON.stringify(najdi(id));
 
@@ -109,12 +177,12 @@ describe('scenár Kusy alebo balenia – výpočty', () => {
     const text = JSON.stringify(koniec);
     expect(text).toContain('45 €');
     expect(text).toContain('1 512 €');
-    expect(text).toContain('nie je to strata');
+    expect(text).toContain('to nie je strata');
     expect(text).toContain('90 × 14 € = 1 260 €');
   });
 });
 
-describe('scenár Zmena adresy – viac správnych poradí', () => {
+describe('scenár Zmena adresy: viac správnych poradí', () => {
   it('overenie aj zastavenie ako prvý krok vedú k bezchybnému záveru', () => {
     const prve = ['s3-start-overit', 's3-start-zastavit'];
     for (const prva of prve) {
@@ -132,7 +200,12 @@ describe('scenár Zmena adresy – viac správnych poradí', () => {
   });
 });
 
-describe('scenár Sľúbený termín – prísľub bez kontroly má viditeľný následok', () => {
+describe('scenár Sľúbený termín: prísľub bez kontroly má viditeľný následok', () => {
+  it('pri prvom rozhodnutí nie je skladový prehľad označený ako dôležitý (pasca ako v praxi)', () => {
+    const start = slubenyTermin.uzly.find((u) => u.id === slubenyTermin.vstupnyUzol);
+    expect(start?.typ === 'rozhodnutie' && start.podklady).toEqual(['s1-email']);
+  });
+
   it('rovno potvrdený termín vedie do spätnej väzby, nie na hlavnú cestu', () => {
     const p = vyberMoznost(slubenyTermin, novyPokus(slubenyTermin), 's1-start-potvrdit');
     expect(p.aktualnyUzol).toBe('s1-slub-bez-kontroly');

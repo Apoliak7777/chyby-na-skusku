@@ -4,26 +4,96 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light" />
-    <meta name="theme-color" content="#0f2a4a" />
-    <title>Chyby na skúšku: tréning z vlastných chýb firmy</title>
+    <meta name="theme-color" content="#13202f" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <title>Zaškolenie nového človeka na príjme objednávok | Chyby na skúšku</title>
+    <!-- verejny web: zaciatok (klientsky build tento blok vynechá, pozri vite.config.ts) -->
     <meta
       name="description"
-      content="Z troch chýb, ktoré sa u vás opakujú, spravíme klikací tréning. Nový človek ich urobí v tréningu, nie u zákazníka. Ukážka bez registrácie."
+      content="Krátky tréning v prehliadači z chýb, ktoré sa opakujú pri príjme objednávok: termíny, kusy a balenia, zmeny adries. Tri situácie z vašej firmy za 690 €, platí sa raz."
     />
-    <meta property="og:title" content="Chyby na skúšku: tréning z vlastných chýb firmy" />
-    <meta
-      property="og:description"
-      content="Z troch chýb, ktoré sa u vás opakujú, spravíme klikací tréning. Nový človek ich urobí v tréningu, nie u zákazníka."
-    />
+    <link rel="canonical" href="https://chybynaskusku.online/" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="sk_SK" />
+    <meta property="og:site_name" content="Chyby na skúšku" />
+    <meta property="og:url" content="https://chybynaskusku.online/" />
+    <meta property="og:title" content="Zaškolenie nového človeka na príjme objednávok" />
+    <meta
+      property="og:description"
+      content="Tréning v prehliadači z chýb pri príjme objednávok: termíny, kusy a balenia, zmeny adries. Pilot 690 €, platí sa raz."
+    />
+    <meta property="og:image" content="https://chybynaskusku.online/og.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Úvodná stránka Chyby na skúšku s ukážkou situácie z príjmu objednávok"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://chybynaskusku.online/#web",
+            "url": "https://chybynaskusku.online/",
+            "name": "Chyby na skúšku",
+            "inLanguage": "sk"
+          },
+          {
+            "@type": "Service",
+            "@id": "https://chybynaskusku.online/#sluzba",
+            "name": "Tréning pre nového človeka na príjme objednávok",
+            "description": "Krátky tréning v prehliadači z chýb, ktoré sa opakujú pri príjme objednávok: termíny, kusy a balenia, zmeny adries. Situácie sú z vašej firmy, s vašimi produktmi a pravidlami.",
+            "url": "https://chybynaskusku.online/",
+            "inLanguage": "sk",
+            "areaServed": { "@type": "Country", "name": "SK" },
+            "provider": {
+              "@type": "Organization",
+              "@id": "https://chybynaskusku.online/#poskytovatel",
+              "name": "Chyby na skúšku",
+              "url": "https://chybynaskusku.online/",
+              "email": "info@chybynaskusku.online"
+            },
+            "offers": [
+              {
+                "@type": "Offer",
+                "name": "Pilot",
+                "description": "3 situácie z chýb, ktoré sa opakujú vo vašej firme",
+                "price": "690",
+                "priceCurrency": "EUR"
+              },
+              {
+                "@type": "Offer",
+                "name": "Kompletný tréning",
+                "description": "10 situácií pre jednu pracovnú pozíciu",
+                "price": "1900",
+                "priceCurrency": "EUR"
+              },
+              {
+                "@type": "Offer",
+                "name": "Rozšírenie",
+                "description": "5 nových situácií v hotovom tréningu",
+                "price": "490",
+                "priceCurrency": "EUR"
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+    <!-- verejny web: koniec -->
+    <link rel="icon" href="./favicon.ico" sizes="32x32 48x48" />
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
   </head>
   <body>
     <div id="root"></div>
     <noscript>
-      <p style="font-family: system-ui, sans-serif; padding: 2rem; max-width: 40rem">
-        Táto stránka potrebuje zapnutý JavaScript – ukážka tréningu je interaktívna. Zapnite ho, prosím, a načítajte stránku znova.
+      <p style="font-family: system-ui, sans-serif; padding: 2rem; max-width: 40rem; color: #13202f">
+        Táto stránka potrebuje zapnutý JavaScript, lebo tréning je interaktívny. Zapnite ho, prosím, a načítajte stránku znova.
       </p>
     </noscript>
     <script type="module" src="/src/main.tsx"></script>

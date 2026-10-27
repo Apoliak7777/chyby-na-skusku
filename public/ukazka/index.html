@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="sk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#13202f" />
+    <title>Ukážka tréningu | Chyby na skúšku</title>
+    <!-- Krátka adresa do e-mailov, presmeruje na prvú situáciu. -->
+    <script>
+      (function () {
+        var zaklad = location.pathname.replace(/ukazka(\/(index\.html)?)?$/i, '') || '/';
+        var parametre = new URLSearchParams(location.search);
+        if (!parametre.has('z')) parametre.set('z', 'u');
+        location.replace(zaklad + '?' + parametre.toString() + '#/demo/slubeny-termin');
+      })();
+    </script>
+    <noscript><meta http-equiv="refresh" content="0; url=../?z=u#/demo/slubeny-termin" /></noscript>
+    <!-- Náhľad odkazu, keď niekto krátku adresu prepošle (Teams, WhatsApp, Outlook). -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="sk_SK" />
+    <meta property="og:site_name" content="Chyby na skúšku" />
+    <meta property="og:url" content="https://chybynaskusku.online/" />
+    <meta property="og:title" content="Zaškolenie nového človeka na príjme objednávok" />
+    <meta
+      property="og:description"
+      content="Tréning v prehliadači z chýb pri príjme objednávok: termíny, kusy a balenia, zmeny adries. Pilot 690 €, platí sa raz."
+    />
+    <meta property="og:image" content="https://chybynaskusku.online/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Úvodná stránka Chyby na skúšku s ukážkou situácie z príjmu objednávok"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <style>
+      body {
+        margin: 0;
+        background: #f5f4ef;
+        color: #13202f;
+        font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        font-size: 17px;
+        line-height: 1.55;
+      }
+      p {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 48px 16px;
+      }
+      a {
+        color: #0b6b57;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <p>Otváram ukážku. Ak sa nič nedeje, <a href="../?z=u#/demo/slubeny-termin">pokračujte na prvú situáciu</a>.</p>
+  </body>
+</html>
