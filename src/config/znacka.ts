@@ -13,8 +13,11 @@ export const znacka = {
    * sekcia „Kto to robí“, podpis pri kontakte a meno v pätičke aj v ochrane údajov.
    */
   poskytovatel: '',
-  /** Telefón v tvare na zobrazenie, napr. '+421 900 000 000'. Prázdny = nikde sa neukáže. */
-  telefon: '',
+  /**
+   * Telefón v tvare na zobrazenie, napr. '+421 900 000 000'. Prázdny = nikde sa neukáže.
+   * Alex 9. 11. 2026: meno na tento web nie, len e-mail a telefón (povinný kontakt podľa § 4 ods. 1 zák. 22/2004).
+   */
+  telefon: '0902 464 022',
   /** IČO a sídlo poskytovateľa. Prázdne = nikde sa neukážu. */
   ico: '',
   sidlo: '',

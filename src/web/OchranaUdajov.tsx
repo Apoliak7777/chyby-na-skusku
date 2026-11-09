@@ -14,13 +14,22 @@ export function OchranaUdajov() {
       <div className="obal obal--uzky pravne">
         <h1>Ochrana osobných údajov</h1>
         <p className="tlmeny">Platí pre web {znacka.webAdresa.replace('https://', '')} a ukážku tréningu na ňom. Stav k 26. 10. 2026.</p>
-        {znacka.poskytovatel && (
+        {znacka.poskytovatel ? (
           <p>
             Prevádzkovateľ: <strong>{znacka.poskytovatel}</strong>
             {znacka.ico ? `, IČO ${znacka.ico}` : ''}
             {znacka.sidlo ? `, ${znacka.sidlo}` : ''}
             {email ? `, ${email}` : ''}.
           </p>
+        ) : (
+          (email || znacka.telefon) && (
+            <p>
+              Kontakt na prevádzkovateľa vo veciach osobných údajov:{' '}
+              {email && <a href={`mailto:${email}`}>{email}</a>}
+              {email && znacka.telefon ? ', ' : ''}
+              {znacka.telefon && <a href={`tel:${znacka.telefon.replace(/\s+/g, '')}`}>{znacka.telefon}</a>}.
+            </p>
+          )
         )}
 
         <h2>Čo tento web nerobí</h2>
