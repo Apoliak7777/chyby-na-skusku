@@ -3,17 +3,18 @@ import { CESTY } from '../router';
 import { Sadzba } from './sadzba';
 
 /**
- * Ochrana osobných údajov. Web nemá cookies, sledovanie ani vlastný backend; osobné údaje
- * spracúvam až vtedy, keď návštevník pošle dopyt zo svojho e-mailu. Technické záznamy
- * hostingu a e-mailovej schránky vedú ich poskytovatelia.
+ * Ochrana osobných údajov (GDPR čl. 13 a 14, stav 10. 11. 2026). Web nemá cookies, sledovanie ani vlastný
+ * backend; osobné údaje spracúvam z dopytu poslaného z e-mailu návštevníka, pri zákazke a pri oslovení firiem
+ * e-mailom. Technické záznamy hostingu a e-mailovej schránky vedú ich poskytovatelia.
  */
 export function OchranaUdajov() {
   const email = znacka.kontaktEmail;
+  const mail = email ? <a href={`mailto:${email}`}>{email}</a> : 'kontaktnú adresu webu';
   return (
     <Sadzba>
       <div className="obal obal--uzky pravne">
         <h1>Ochrana osobných údajov</h1>
-        <p className="tlmeny">Platí pre web {znacka.webAdresa.replace('https://', '')} a ukážku tréningu na ňom. Stav k 26. 10. 2026.</p>
+        <p className="tlmeny">Platí pre web {znacka.webAdresa.replace('https://', '')} a ukážku tréningu na ňom. Stav k 10. 11. 2026.</p>
         {znacka.poskytovatel ? (
           <p>
             Prevádzkovateľ: <strong>{znacka.poskytovatel}</strong>
@@ -40,42 +41,65 @@ export function OchranaUdajov() {
           <li>Formulár dopytu neodosiela údaje zo stránky. Len pripraví text, ktorý si skopírujete alebo otvoríte vo svojom e-mailovom programe.</li>
         </ul>
 
-        <h2>Hosting a e-mailová schránka</h2>
-        <p>
-          Web beží na službe GitHub Pages. GitHub Pages ako každý webový server vedie technické záznamy o prístupoch, napríklad IP adresu a
-          čas návštevy. Tieto záznamy spracúva GitHub na prevádzku a zabezpečenie služby, ja ich nepoužívam.
-        </p>
-        <p>
-          E-mailová schránka {email ? email : 'uvedená na webe'} je u poskytovateľa Hostinger. Správy, ktoré mi pošlete, sú uložené na jeho
-          serveroch.
-        </p>
-
-        <h2>Kedy spracúvam osobné údaje</h2>
-        <p>
-          Až vtedy, keď mi pošlete dopyt na adresu {email ? <a href={`mailto:${email}`}>{email}</a> : 'uvedenú na webe'}. Vtedy spracúvam
-          údaje, ktoré ste do e-mailu napísali: názov firmy, kontaktný e-mail, prípadne telefón, meno a pozíciu kontaktnej osoby a opis
-          situácie, ktorú chcete precvičiť.
-        </p>
-
-        <h2>Na čo ich používam</h2>
+        <h2>Aké údaje spracúvam a prečo</h2>
         <ul className="odrazky">
-          <li>na odpoveď na váš dopyt, dohodnutie rozhovoru a prípravu ponuky (rokovanie o zmluve),</li>
-          <li>na plnenie dohodnutej zákazky, ak sa na spolupráci dohodneme,</li>
-          <li>na evidenciu dokladov, ak to vyžaduje zákon.</li>
+          <li>
+            <strong>Dopyt a ponuka:</strong> údaje, ktoré mi pošlete e-mailom: názov firmy, kontaktný e-mail, prípadne telefón,
+            meno a pozíciu kontaktnej osoby a opis situácie, ktorú chcete precvičiť. Právny základ: kroky pred uzavretím zmluvy na
+            vašu žiadosť a oprávnený záujem komunikovať s kontaktnou osobou firmy (čl. 6 ods. 1 písm. b) a f) GDPR). Ak spolupráca
+            nevznikne, dopyt vymažem najneskôr 12 mesiacov od poslednej komunikácie.
+          </li>
+          <li>
+            <strong>Zákazka:</strong> podklady a komunikácia pri tréningu na mieru. Právny základ: plnenie zmluvy a oprávnený záujem
+            komunikovať s kontaktnou osobou zákazníka (čl. 6 ods. 1 písm. b) a f) GDPR). Uchovávam ich počas zákazky a najviac 2 roky
+            po nej, keby ste chceli tréning upraviť.
+          </li>
+          <li>
+            <strong>Faktúry:</strong> fakturačné údaje firmy. Právny základ: zákonná povinnosť (čl. 6 ods. 1 písm. c) GDPR).
+            Uchovávam ich tak dlho, ako to vyžadujú daňové predpisy (najviac 10 rokov).
+          </li>
+          <li>
+            <strong>Oslovenie e-mailom:</strong> pracovná e-mailová adresa, názov firmy a verejné údaje o nej (napríklad odbor, sídlo
+            a veľkosť). Právny základ: oprávnený záujem ponúkať tréningy firmám (čl. 6 ods. 1 písm. f) GDPR). Uchovávam ich najviac
+            2 roky od posledného oslovenia.
+          </li>
         </ul>
-        <p>Údaje nepredávam ani neposkytujem tretím stranám na marketing. Nepoužívam ich na automatické rozhodovanie.</p>
-
-        <h2>Ako dlho ich uchovávam</h2>
         <p>
-          Dopyt, z ktorého nevznikla spolupráca, uchovávam najviac 12 mesiacov od poslednej komunikácie a potom ho vymažem. Pri spolupráci
-          uchovávam podklady a komunikáciu počas trvania zákazky a po nej len to, čo vyžadujú účtovné a daňové predpisy.
+          Poskytnutie údajov je dobrovoľné, nie je to zákonná povinnosť, bez kontaktu vám však nemôžem odpovedať ani pripraviť
+          tréning. Údaje nepredávam ani neposkytujem tretím stranám na marketing.
+        </p>
+
+        <h2>Oslovenie e-mailom</h2>
+        <p>
+          Firmám a živnostníkom posielam e-mailom ponuku klikacích tréningov pre nových pracovníkov. Pracovnú e-mailovú adresu a
+          názov firmy mám z webu firmy alebo z verejných registrov a databáz firiem. Poradie oslovovania určujem podľa verejných
+          údajov o firme, napríklad podľa odboru a veľkosti. Nemá to pre vás žiadne právne účinky a automatizovane o vás nerozhodujem.
+        </p>
+        <p>
+          Proti osloveniu môžete kedykoľvek namietať: stačí odpísať jednou vetou a viac vás neoslovím v žiadnej mojej ponuke.
+          Ponechám si len vašu adresu, aby som vám nenapísal znova.
+        </p>
+
+        <h2>Komu údaje odovzdávam</h2>
+        <p>
+          Web beží na službe GitHub Pages spoločnosti GitHub, Inc. (USA). GitHub ako každý webový server vedie technické záznamy o
+          prístupoch, napríklad IP adresu a čas návštevy, a spracúva ich na prevádzku a zabezpečenie služby, ja ich nepoužívam. Prenos
+          do USA prebieha na základe rozhodnutia Európskej komisie o primeranosti (EU-US Data Privacy Framework).
+        </p>
+        <p>
+          E-mailová schránka {email ? email : 'uvedená na webe'} je u poskytovateľa Hostinger International Ltd. (Cyprus). Správy,
+          ktoré mi pošlete, sú uložené na jeho serveroch.
         </p>
 
         <h2>Vaše práva</h2>
         <p>
-          Máte právo na prístup k svojim údajom, ich opravu alebo vymazanie, obmedzenie spracúvania a právo namietať. Stačí napísať na{' '}
-          {email ? <a href={`mailto:${email}`}>{email}</a> : 'kontaktnú adresu webu'}. Ak si myslíte, že vaše údaje spracúvam nesprávne,
-          môžete sa obrátiť na Úrad na ochranu osobných údajov Slovenskej republiky.
+          Máte právo na prístup k svojim údajom, ich opravu alebo vymazanie, obmedzenie spracúvania, prenosnosť a právo namietať proti
+          spracúvaniu na základe oprávneného záujmu vrátane oslovenia e-mailom. Stačí napísať na {mail}, vybavím to najneskôr do
+          mesiaca.
+        </p>
+        <p>
+          Ak si myslíte, že vaše údaje spracúvam nesprávne, môžete podať sťažnosť na Úrad na ochranu osobných údajov Slovenskej
+          republiky, Hraničná 12, 820 07 Bratislava 27, <a href="https://dataprotection.gov.sk/">dataprotection.gov.sk</a>.
         </p>
 
         <h2>Klientske tréningy</h2>
