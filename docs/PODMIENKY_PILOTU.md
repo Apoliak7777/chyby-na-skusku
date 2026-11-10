@@ -1,6 +1,6 @@
 # Podmienky pilotu Chyby na skúšku
 
-Platí pre pilot: tri situácie pre jednu pracovnú pozíciu. Verzia z 26. 10. 2026.
+Verzia z 10. 11. 2026. Poskytovateľ: IČO 57 990 883, živnostenský register OÚ Senec, č. 140-39176.
 
 ## 1. Čo dostanete
 

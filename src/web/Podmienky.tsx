@@ -16,7 +16,14 @@ export function Podmienky() {
     <Sadzba>
       <div className="obal obal--uzky pravne">
         <h1>Podmienky pilotu</h1>
-        <p className="tlmeny">Platí pre pilot: tri situácie pre jednu pracovnú pozíciu. Stav k 26. 10. 2026.</p>
+        <p className="tlmeny">Platí pre pilot: tri situácie pre jednu pracovnú pozíciu. Stav k 10. 11. 2026.</p>
+        {znacka.ico && (
+          <p className="tlmeny">
+            Poskytovateľ: podnikajúca fyzická osoba, IČO {znacka.ico}
+            {znacka.zapis ? `, ${znacka.zapis}` : ''}
+            {znacka.kontaktEmail ? `, ${znacka.kontaktEmail}` : ''}.
+          </p>
+        )}
 
         <h2>1. Čo dostanete</h2>
         <ul className="odrazky">

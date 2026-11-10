@@ -19,18 +19,27 @@ export function OchranaUdajov() {
           <p>
             Prevádzkovateľ: <strong>{znacka.poskytovatel}</strong>
             {znacka.ico ? `, IČO ${znacka.ico}` : ''}
+            {znacka.zapis ? `, ${znacka.zapis}` : ''}
             {znacka.sidlo ? `, ${znacka.sidlo}` : ''}
             {email ? `, ${email}` : ''}.
           </p>
         ) : (
-          (email || znacka.telefon) && (
-            <p>
-              Kontakt na prevádzkovateľa vo veciach osobných údajov:{' '}
-              {email && <a href={`mailto:${email}`}>{email}</a>}
-              {email && znacka.telefon ? ', ' : ''}
-              {znacka.telefon && <a href={`tel:${znacka.telefon.replace(/\s+/g, '')}`}>{znacka.telefon}</a>}.
-            </p>
-          )
+          <>
+            {znacka.ico && (
+              <p>
+                Prevádzkovateľ: podnikajúca fyzická osoba, IČO {znacka.ico}
+                {znacka.zapis ? `, ${znacka.zapis}` : ''}.
+              </p>
+            )}
+            {(email || znacka.telefon) && (
+              <p>
+                Kontakt na prevádzkovateľa vo veciach osobných údajov:{' '}
+                {email && <a href={`mailto:${email}`}>{email}</a>}
+                {email && znacka.telefon ? ', ' : ''}
+                {znacka.telefon && <a href={`tel:${znacka.telefon.replace(/\s+/g, '')}`}>{znacka.telefon}</a>}.
+              </p>
+            )}
+          </>
         )}
 
         <h2>Čo tento web nerobí</h2>

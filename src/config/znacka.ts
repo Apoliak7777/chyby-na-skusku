@@ -18,9 +18,11 @@ export const znacka = {
    * Alex 9. 11. 2026: meno na tento web nie, len e-mail a telefón (povinný kontakt podľa § 4 ods. 1 zák. 22/2004).
    */
   telefon: '0902 464 022',
-  /** IČO a sídlo poskytovateľa. Prázdne = nikde sa neukážu. */
-  ico: '',
+  /** IČO a sídlo poskytovateľa. Prázdne = nikde sa neukážu. Živnosť od 9. 11. 2026, sídlo (adresa) sa na web nedáva. */
+  ico: '57 990 883',
   sidlo: '',
+  /** Údaj o zápise podľa § 3a ObZ (ochrana údajov, podmienky pilotu). Prázdny = neukáže sa. */
+  zapis: 'živnostenský register Okresného úradu Senec, č. 140-39176',
   /** Fotka poskytovateľa v public/, napr. 'img/foto.jpg'. Ukáže sa len spolu s menom. */
   fotka: '',
   /** Lehota odpovede, napr. 'jedného pracovného dňa'. Vyplniť, len ak naozaj platí. */
