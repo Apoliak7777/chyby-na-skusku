@@ -10,6 +10,7 @@ import { CESTY, useTrasa } from './router';
 import { Landing } from './web/Landing';
 import { OchranaUdajov } from './web/OchranaUdajov';
 import { Podmienky } from './web/Podmienky';
+import { UdajePodnikatela } from './web/UdajePodnikatela';
 
 /**
  * Klientsky tréning: len prehrávač, bez predajného webu. __KLIENT__ je známe už pri preklade
@@ -21,6 +22,7 @@ const JE_KLIENT = __KLIENT__ || trening.rezim === 'klient';
 const PREDAJ = !JE_KLIENT;
 const CESTA_OCHRANA = '/ochrana-udajov';
 const CESTA_PODMIENKY = '/podmienky';
+const CESTA_UDAJE = '/udaje-o-podnikatelovi';
 
 export function App() {
   const trasa = useTrasa();
@@ -54,6 +56,7 @@ function nazovStranky(cesta: string): string {
     if (cesta === '/') return `Zaškolenie nového človeka na príjme objednávok | ${znacka.nazov}`;
     if (cesta === CESTA_OCHRANA) return `Ochrana osobných údajov: ${znacka.nazov}`;
     if (cesta === CESTA_PODMIENKY) return `Podmienky pilotu: ${znacka.nazov}`;
+    if (cesta === CESTA_UDAJE) return `Údaje o podnikateľovi: ${znacka.nazov}`;
   }
   const zaklad = PREDAJ ? znacka.nazov : trening.nazov;
   if (cesta === '/demo') return `Situácie: ${zaklad}`;
@@ -67,6 +70,7 @@ function vyberObsah(cesta: string, params: URLSearchParams): ReactNode {
     if (cesta === '/') return <Landing />;
     if (cesta === CESTA_OCHRANA) return <OchranaUdajov />;
     if (cesta === CESTA_PODMIENKY) return <Podmienky />;
+    if (cesta === CESTA_UDAJE) return <UdajePodnikatela />;
   }
   if (cesta === '/' || cesta === '/demo') return <DemoDomov />;
   if (cesta === '/demo/prehlad') return <PrehladTreningu />;
@@ -256,6 +260,7 @@ function KontaktPoskytovatela() {
         )}
       </p>
       <p className="tlmeny male paticka__odkazy">
+        <a href={CESTY.udaje}>Údaje o podnikateľovi</a>
         <a href={CESTY.podmienky}>Podmienky pilotu</a>
         <a href={CESTY.ochrana}>Ochrana osobných údajov</a>
       </p>

@@ -1,6 +1,6 @@
 # Podmienky pilotu Chyby na skúšku
 
-Verzia z 10. 11. 2026. Poskytovateľ: IČO 57 990 883, živnostenský register OÚ Senec, č. 140-39176.
+Verzia z 18. 11. 2026. Poskytovateľ: Alex Poliak, podnikajúci pod značkou Apoliak, IČO 57 990 883, zapísaný v živnostenskom registri Okresného úradu Senec, č. 140-39176.
 
 ## 1. Čo dostanete
 

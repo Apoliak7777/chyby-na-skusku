@@ -21,6 +21,17 @@ export const znacka = {
   /** IČO a sídlo poskytovateľa. Prázdne = nikde sa neukážu. Živnosť od 9. 11. 2026, sídlo (adresa) sa na web nedáva. */
   ico: '57 990 883',
   sidlo: '',
+  /**
+   * Obchodné meno živnostníka = meno a priezvisko (§ 9 ods. 1 ObZ). Alex 18. 11. 2026: „zákonné minimum áno, nič navyše“ –
+   * ukáže sa len v Údajoch o podnikateľovi, v ochrane údajov a v podmienkach, nie v pätičke ani v sekcii „Kto to robí“
+   * (tá ostáva naviazaná na `poskytovatel`).
+   */
+  obchodneMeno: 'Alex Poliak',
+  /** ⛔ Miesto podnikania a adresa bydliska (§ 4 ods. 1 písm. a) zák. 22/2004) – vyplniť len na Alexovo výslovné rozhodnutie. */
+  miestoPodnikania: '',
+  adresaBydliska: '',
+  /** Orgán dozoru (§ 4 ods. 1 písm. e) zák. 22/2004). */
+  organDozoru: 'Slovenská obchodná inšpekcia, Inšpektorát SOI pre Bratislavský kraj, Bajkalská 21/A, P. O. BOX 5, 820 07 Bratislava',
   /** Údaj o zápise podľa § 3a ObZ (ochrana údajov, podmienky pilotu). Prázdny = neukáže sa. */
   zapis: 'živnostenský register Okresného úradu Senec, č. 140-39176',
   /** Fotka poskytovateľa v public/, napr. 'img/foto.jpg'. Ukáže sa len spolu s menom. */

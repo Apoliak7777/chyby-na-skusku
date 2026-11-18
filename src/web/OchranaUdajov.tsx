@@ -27,8 +27,8 @@ export function OchranaUdajov() {
           <>
             {znacka.ico && (
               <p>
-                Prevádzkovateľ: podnikajúca fyzická osoba, IČO {znacka.ico}
-                {znacka.zapis ? `, ${znacka.zapis}` : ''}.
+                Prevádzkovateľ: {znacka.obchodneMeno}, podnikajúci pod značkou Apoliak, IČO {znacka.ico}
+                {znacka.zapis ? `, zapísaný v ${znacka.zapis}` : ''}.
               </p>
             )}
             {(email || znacka.telefon) && (
@@ -80,13 +80,14 @@ export function OchranaUdajov() {
 
         <h2>Oslovenie e-mailom</h2>
         <p>
-          Firmám a živnostníkom posielam e-mailom ponuku klikacích tréningov pre nových pracovníkov. Pracovnú e-mailovú adresu a
-          názov firmy mám z webu firmy alebo z verejných registrov a databáz firiem. Poradie oslovovania určujem podľa verejných
-          údajov o firme, napríklad podľa odboru a veľkosti. Nemá to pre vás žiadne právne účinky a automatizovane o vás nerozhodujem.
+          Do 18. 11. 2026 som firmám a živnostníkom posielal e-mailom ponuku klikacích tréningov. Pracovnú e-mailovú adresu a názov
+          firmy som mal z webu firmy alebo z verejných registrov a databáz firiem. Od 18. 11. 2026 bez súhlasu nikoho e-mailom
+          neoslovujem. Adresy oslovených firiem uchovávam len ako záznam, komu a kedy správa odišla, najviac 2 roky od posledného
+          oslovenia.
         </p>
         <p>
-          Proti osloveniu môžete kedykoľvek namietať: stačí odpísať jednou vetou a viac vás neoslovím v žiadnej mojej ponuke.
-          Ponechám si len vašu adresu, aby som vám nenapísal znova.
+          Ak ste namietli alebo sa odhlásili, ponechám si len vašu adresu, aby som vám už nikdy nenapísal. Vymazanie alebo
+          námietku môžete poslať kedykoľvek jednou vetou.
         </p>
 
         <h2>Komu údaje odovzdávam</h2>

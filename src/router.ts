@@ -61,5 +61,6 @@ export const CESTY = {
   prehlad: '#/demo/prehlad',
   podmienky: '#/podmienky',
   ochrana: '#/ochrana-udajov',
+  udaje: '#/udaje-o-podnikatelovi',
   scenar: (id: string, prva?: string) => `#/demo/${id}${prva ? `?prva=${encodeURIComponent(prva)}` : ''}`,
 } as const;

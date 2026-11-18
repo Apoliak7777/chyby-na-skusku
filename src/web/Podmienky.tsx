@@ -19,8 +19,8 @@ export function Podmienky() {
         <p className="tlmeny">Platí pre pilot: tri situácie pre jednu pracovnú pozíciu. Stav k 10. 11. 2026.</p>
         {znacka.ico && (
           <p className="tlmeny">
-            Poskytovateľ: podnikajúca fyzická osoba, IČO {znacka.ico}
-            {znacka.zapis ? `, ${znacka.zapis}` : ''}
+            Poskytovateľ: {znacka.obchodneMeno}, podnikajúci pod značkou Apoliak, IČO {znacka.ico}
+            {znacka.zapis ? `, zapísaný v ${znacka.zapis}` : ''}
             {znacka.kontaktEmail ? `, ${znacka.kontaktEmail}` : ''}.
           </p>
         )}
