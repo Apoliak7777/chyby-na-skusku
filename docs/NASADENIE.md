@@ -23,7 +23,7 @@ adresy bez hash (`/ukazka`, `/demo`, `/cennik` …) riešia `public/ukazka/index
 
 | Údaj | Pole | Stav |
 |---|---|---|
-| Kontaktný e-mail na dopyty | `kontaktEmail` | vyplnený (`efaktury@apoliak.sk`): adresa v pätičke, tlačidlo „Otvoriť e-mail s dopytom“ a odkazy `mailto` |
+| Kontaktný e-mail na dopyty | `kontaktEmail` | vyplnený (`info@apoliak.sk`): adresa v pätičke, tlačidlo „Otvoriť e-mail s dopytom“ a odkazy `mailto` |
 | Adresa webu | `webAdresa` | vyplnená (`https://chybynaskusku.online`) |
 | Meno poskytovateľa | `poskytovatel` | zámerne prázdne: na webe sa meno neuvádza |
 | Telefón | `telefon` | zámerne prázdny |

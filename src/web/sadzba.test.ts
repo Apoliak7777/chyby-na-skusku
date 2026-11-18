@@ -43,7 +43,7 @@ describe('sadzba', () => {
 
   it('nemení slová, ktoré len končia alebo začínajú rovnakým písmenom', () => {
     expect(sadzba('nový sklad volá')).toBe('nový sklad volá');
-    expect(sadzba('efaktury@apoliak.sk')).toBe('efaktury@apoliak.sk');
+    expect(sadzba('info@apoliak.sk')).toBe('info@apoliak.sk');
   });
 
   it('upraví text aj vo vnorených prvkoch a nechá atribúty', () => {

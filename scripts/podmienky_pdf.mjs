@@ -45,7 +45,7 @@ const unik = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g,
 const riadkovy = (s) =>
   unik(s)
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/efaktury@apoliak.sk/g, '<a href="mailto:efaktury@apoliak.sk">efaktury@apoliak.sk</a>')
+    .replace(/info@apoliak.sk/g, '<a href="mailto:info@apoliak.sk">info@apoliak.sk</a>')
     .replace(/(^|[\s,])chybynaskusku\.online(?=[\s,.]|$)/g, '$1<a href="https://chybynaskusku.online">chybynaskusku.online</a>');
 
 function naHtml(md) {

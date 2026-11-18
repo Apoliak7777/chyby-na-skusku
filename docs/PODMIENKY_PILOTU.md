@@ -43,4 +43,4 @@ Spolu 2 až 3 hodiny vášho času.
 
 Napíšte mi jednou vetou, kde sa nový človek najčastejšie pomýli. Pošlem ponuku s rozsahom, cenou a termínom. Po vašom súhlase pošlem potvrdenie objednávky a výzvu na úhradu prvej polovice.
 
-efaktury@apoliak.sk, chybynaskusku.online
+info@apoliak.sk, chybynaskusku.online

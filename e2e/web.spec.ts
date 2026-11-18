@@ -153,7 +153,7 @@ test('kontakt: jedna veta cez e-mail, skopírovanie adresy a krátky formulár b
   const kontakt = page.locator('#dopyt');
   await expect(kontakt).toContainText('Napríklad: „Potvrdí termín bez kontroly rezervácií.“');
   const jednaVeta = await kontakt.getByRole('link', { name: 'Napísať e-mail' }).getAttribute('href');
-  expect(jednaVeta).toMatch(/^mailto:efaktury@apoliak.sk\?subject=/);
+  expect(jednaVeta).toMatch(/^mailto:info@apoliak.sk\?subject=/);
   expect(jednaVeta).toContain('%0D%0A');
   const teloJednejVety = new URL(jednaVeta ?? '').searchParams.get('body') ?? '';
   expect(teloJednejVety).toContain('nový človek sa u nás najčastejšie pomýli takto:');
@@ -164,7 +164,7 @@ test('kontakt: jedna veta cez e-mail, skopírovanie adresy a krátky formulár b
   expect(new URL(veducemu ?? '').searchParams.get('body')).toMatch(/^Dobrý deň,\r\n/);
 
   await kontakt.getByRole('button', { name: 'Skopírovať adresu' }).click();
-  await expect(kontakt.getByRole('status').first()).toContainText('efaktury@apoliak.sk');
+  await expect(kontakt.getByRole('status').first()).toContainText('info@apoliak.sk');
 
   await kontakt.getByText('Radšej vyplním krátky formulár').click();
   // Reťazec, nie regulárny výraz: popis má po sadzbe nezlomiteľné medzery a reťazec ich porovná ako medzery.
@@ -188,7 +188,7 @@ test('kontakt: jedna veta cez e-mail, skopírovanie adresy a krátky formulár b
   await expect(textDopytu).toHaveValue(/takto:\nPotvrdí termín bez kontroly rezervácií\./);
   await expect(textDopytu).toHaveValue(/Zaujíma nás: Kompletný tréning \(1 900 €\)/);
   const odkaz = kontakt.getByRole('link', { name: 'Otvoriť e-mail s dopytom' });
-  await expect(odkaz).toHaveAttribute('href', /^mailto:efaktury@apoliak.sk\?subject=Dopyt%3A%20Chyby%20na%20sk/);
+  await expect(odkaz).toHaveAttribute('href', /^mailto:info@apoliak.sk\?subject=Dopyt%3A%20Chyby%20na%20sk/);
   await expect(odkaz).toHaveAttribute('href', /%0D%0A/);
   expect((await page.locator('body').innerText()).toLowerCase()).not.toContain('odoslan');
   expect(chyby).toEqual([]);
@@ -204,7 +204,7 @@ test('podmienky, ochrana údajov, pás z mailu a skip link v ukážke', async ({
   await expect(podmienky).toContainText('Hotový tréning do 10 pracovných dní od úplných podkladov.');
   await expect(podmienky).toContainText('do 10 pracovných dní od odovzdania');
   await expect(podmienky).toContainText(VYSLEDOK_PRE_VEDUCEHO);
-  await expect(podmienky).toContainText('alebo napíšte na efaktury@apoliak.sk');
+  await expect(podmienky).toContainText('alebo napíšte na info@apoliak.sk');
   expect(await textBez(page, 'main')).not.toMatch(/ [–—] /);
 
   await page.goto('/#/ochrana-udajov');
