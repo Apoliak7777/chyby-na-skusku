@@ -75,7 +75,7 @@ for (const [znak, popis] of [
 // (__KLIENT__ vo vite.config.ts). Zamestnanec klienta by ich inak videl v zdrojovom kóde.
 const ZAKAZANE_V_JS = [
   'chybynaskusku',
-  'info@chybynaskusku.online',
+  'efaktury@apoliak.sk',
   'Koľko to stojí',
   'Podmienky pilotu',
   'Toto bola vymyslená firma',

@@ -42,7 +42,7 @@ export const znacka = {
    * Kontaktný e-mail na dopyty. Kým je prázdny, formulár dopyt len pripraví
    * a ponúkne jeho skopírovanie; tlačidlo „Otvoriť e-mail s dopytom“ sa neukáže.
    */
-  kontaktEmail: 'info@chybynaskusku.online',
+  kontaktEmail: 'efaktury@apoliak.sk',
   /** Verejná adresa webu. */
   webAdresa: 'https://chybynaskusku.online',
   /**

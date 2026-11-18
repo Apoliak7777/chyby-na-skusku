@@ -58,7 +58,7 @@ test('chybná voľba z náhľadu, oprava, súhrn s blokom pre majiteľa a návra
   const blok = page.locator('.majitel');
   await expect(blok.getByRole('heading', { name: 'Toto bola vymyslená firma. Ktorá chyba sa opakuje u vás?' })).toBeVisible();
   await expect(blok).toContainText('Tri situácie za 690 €');
-  await expect(blok.getByRole('link', { name: 'Napísať jednou vetou' })).toHaveAttribute('href', /^mailto:info@chybynaskusku\.online\?subject=/);
+  await expect(blok.getByRole('link', { name: 'Napísať jednou vetou' })).toHaveAttribute('href', /^mailto:efaktury@apoliak.sk\?subject=/);
   await expect(blok.getByRole('link', { name: 'Čo je v cene' })).toHaveAttribute('href', '#cennik');
   await expect(blok.getByRole('link', { name: 'Poslať odkaz vedúcemu' })).toHaveAttribute('href', /^mailto:\?subject=/);
   await expect(blok.getByText('Otvorí sa váš e-mail. Zo stránky sa nič neodosiela.')).toBeVisible();
