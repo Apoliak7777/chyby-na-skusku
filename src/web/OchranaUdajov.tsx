@@ -97,8 +97,8 @@ export function OchranaUdajov() {
           do USA prebieha na základe rozhodnutia Európskej komisie o primeranosti (EU-US Data Privacy Framework).
         </p>
         <p>
-          E-mailová schránka {email ? email : 'uvedená na webe'} je u poskytovateľa Hostinger International Ltd. (Cyprus). Správy,
-          ktoré mi pošlete, sú uložené na jeho serveroch.
+          E-mailové schránky mám u poskytovateľov Webglobe, a.s. (Bratislava) a Hostinger International Ltd. (Cyprus). Správy,
+          ktoré mi pošlete, sú uložené na ich serveroch.
         </p>
 
         <h2>Vaše práva</h2>
