@@ -27,9 +27,9 @@ export const znacka = {
    * (tá ostáva naviazaná na `poskytovatel`).
    */
   obchodneMeno: 'Alex Poliak',
-  /** ⛔ Miesto podnikania a adresa bydliska (§ 4 ods. 1 písm. a) zák. 22/2004) – vyplniť len na Alexovo výslovné rozhodnutie. */
-  miestoPodnikania: '',
-  adresaBydliska: '',
+  /** Miesto podnikania a adresa bydliska (§ 4 ods. 1 písm. a) zák. 22/2004) – Alex 20. 11. 2026 súhlasil; ukážu sa LEN v Údajoch o podnikateľovi. */
+  miestoPodnikania: 'Mierová 133/24, 900 29 Nová Dedinka',
+  adresaBydliska: 'Mierová 133/24, 900 29 Nová Dedinka',
   /** Orgán dozoru (§ 4 ods. 1 písm. e) zák. 22/2004). */
   organDozoru: 'Slovenská obchodná inšpekcia, Inšpektorát SOI pre Bratislavský kraj, Bajkalská 21/A, P. O. BOX 5, 820 07 Bratislava',
   /** Údaj o zápise podľa § 3a ObZ (ochrana údajov, podmienky pilotu). Prázdny = neukáže sa. */
@@ -42,7 +42,7 @@ export const znacka = {
    * Kontaktný e-mail na dopyty. Kým je prázdny, formulár dopyt len pripraví
    * a ponúkne jeho skopírovanie; tlačidlo „Otvoriť e-mail s dopytom“ sa neukáže.
    */
-  kontaktEmail: 'info@apoliak.sk',
+  kontaktEmail: 'kontakt@chybynaskusku.online', // 20. 11. 2026: každý web svoju schránku
   /** Verejná adresa webu. */
   webAdresa: 'https://chybynaskusku.online',
   /**

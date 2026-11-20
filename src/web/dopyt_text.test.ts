@@ -75,7 +75,7 @@ describe('mailto odkaz', () => {
   });
 
   it('jedna veta ide na kontaktnú adresu a začína gramatickou vetou', () => {
-    expect(mailtoJednaVeta()).toMatch(/^mailto:info@apoliak.sk\?subject=/);
+    expect(mailtoJednaVeta()).toMatch(/^mailto:kontakt@chybynaskusku\.online\?subject=/);
     expect(TELO_JEDNA_VETA).toContain('nový človek sa u nás najčastejšie pomýli takto: ');
     expect(TELO_JEDNA_VETA).toContain('Telefón (ak je jednoduchšie zavolať): ');
     expect(new URL(mailtoJednaVeta()).searchParams.get('body')).toContain('\r\n');

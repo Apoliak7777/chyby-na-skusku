@@ -14,7 +14,7 @@ export function OchranaUdajov() {
     <Sadzba>
       <div className="obal obal--uzky pravne">
         <h1>Ochrana osobných údajov</h1>
-        <p className="tlmeny">Platí pre web {znacka.webAdresa.replace('https://', '')} a ukážku tréningu na ňom. Stav k 10. 11. 2026.</p>
+        <p className="tlmeny">Platí pre web {znacka.webAdresa.replace('https://', '')} a ukážku tréningu na ňom. Stav k 20. 11. 2026.</p>
         {znacka.poskytovatel ? (
           <p>
             Prevádzkovateľ: <strong>{znacka.poskytovatel}</strong>
@@ -25,12 +25,9 @@ export function OchranaUdajov() {
           </p>
         ) : (
           <>
-            {znacka.ico && (
-              <p>
-                Prevádzkovateľ: {znacka.obchodneMeno}, podnikajúci pod značkou Apoliak, IČO {znacka.ico}
-                {znacka.zapis ? `, zapísaný v ${znacka.zapis}` : ''}.
-              </p>
-            )}
+            <p>
+              Prevádzkovateľ: Apoliak; jeho údaje sú na stránke <a href="#/udaje-o-podnikatelovi">Údaje o podnikateľovi</a>.
+            </p>
             {(email || znacka.telefon) && (
               <p>
                 Kontakt na prevádzkovateľa vo veciach osobných údajov:{' '}

@@ -16,14 +16,11 @@ export function Podmienky() {
     <Sadzba>
       <div className="obal obal--uzky pravne">
         <h1>Podmienky pilotu</h1>
-        <p className="tlmeny">Platí pre pilot: tri situácie pre jednu pracovnú pozíciu. Stav k 10. 11. 2026.</p>
-        {znacka.ico && (
-          <p className="tlmeny">
-            Poskytovateľ: {znacka.obchodneMeno}, podnikajúci pod značkou Apoliak, IČO {znacka.ico}
-            {znacka.zapis ? `, zapísaný v ${znacka.zapis}` : ''}
-            {znacka.kontaktEmail ? `, ${znacka.kontaktEmail}` : ''}.
-          </p>
-        )}
+        <p className="tlmeny">Platí pre pilot: tri situácie pre jednu pracovnú pozíciu. Stav k 20. 11. 2026.</p>
+        <p className="tlmeny">
+          Poskytovateľ: Apoliak{znacka.kontaktEmail ? `, ${znacka.kontaktEmail}` : ''}; jeho údaje sú na stránke{' '}
+          <a href="#/udaje-o-podnikatelovi">Údaje o podnikateľovi</a>.
+        </p>
 
         <h2>1. Čo dostanete</h2>
         <ul className="odrazky">

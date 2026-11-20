@@ -463,7 +463,7 @@ function KtoToRobi() {
               schváli váš človek.
             </p>
             <p className="kto__udaje">
-              {[znacka.telefon, znacka.kontaktEmail, znacka.ico ? `IČO ${znacka.ico}` : '', znacka.sidlo].filter(Boolean).join(' · ')}
+              {[znacka.telefon, znacka.kontaktEmail].filter(Boolean).join(' · ')}
             </p>
           </div>
         </div>

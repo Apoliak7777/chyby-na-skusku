@@ -238,7 +238,7 @@ function KontaktPoskytovatela() {
       <p className="paticka__znacka" translate="no">
         <strong>{znacka.nazov}</strong>
         {znacka.poskytovatel && <span className="tlmeny"> · {znacka.poskytovatel}</span>}
-        {znacka.ico && <span className="tlmeny"> · IČO {znacka.ico}</span>}
+        <span className="tlmeny"> · Apoliak</span>
         <span className="tlmeny"> · {znacka.rok}</span>
       </p>
       {znacka.sidlo && <p className="tlmeny male">{znacka.sidlo}</p>}

@@ -10,11 +10,13 @@ import { Sadzba } from './sadzba';
 export function UdajePodnikatela() {
   const email = znacka.kontaktEmail;
   const riadky: Array<[string, ReactNode]> =[['Obchodné meno', `${znacka.obchodneMeno} (značka Apoliak)`]];
-  if (znacka.miestoPodnikania) riadky.push(['Miesto podnikania', znacka.miestoPodnikania]);
-  if (znacka.adresaBydliska) riadky.push(['Adresa bydliska', znacka.adresaBydliska]);
+  if (znacka.miestoPodnikania && znacka.miestoPodnikania === znacka.adresaBydliska) riadky.push(['Miesto podnikania a bydlisko', znacka.miestoPodnikania]);
+  else {
+    if (znacka.miestoPodnikania) riadky.push(['Miesto podnikania', znacka.miestoPodnikania]);
+    if (znacka.adresaBydliska) riadky.push(['Adresa bydliska', znacka.adresaBydliska]);
+  }
   riadky.push(['IČO', znacka.ico]);
   if (znacka.zapis) riadky.push(['Zápis', znacka.zapis]);
-  riadky.push(['DPH', 'nie som platiteľ DPH']);
   riadky.push([
     'Kontakt',
     <>
